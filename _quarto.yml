@@ -1,0 +1,35 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "index.qmd"
+    - "unit-*.qmd"
+
+website:
+  title: "Reading R Code"
+  description: "A summer primer for API-201 students at HKS"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: unit-1.qmd
+        text: "1. Building Blocks"
+      - href: unit-2.qmd
+        text: "2. Read a Pipeline"
+      - href: unit-3.qmd
+        text: "3. Spot the Problem"
+      - href: unit-4.qmd
+        text: "4. Full Narration"
+  page-footer:
+    center: "Harvard Kennedy School · API-201"
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-copy: false
+    code-tools: false
+
+execute:
+  eval: false
+  echo: true
