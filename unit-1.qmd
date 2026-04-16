@@ -1,5 +1,171 @@
 ---
 title: "Unit 1 — The Building Blocks"
+subtitle: "Eight verbs you'll see again and again"
 ---
 
-Content forthcoming.
+## What this unit is for
+
+By the time you arrive on campus, you'll have seen the eight tidyverse "verbs" that make up almost every R script we'll read together this fall. Your goal isn't to memorize syntax. It's to learn to recognize each verb on sight and know what it does to a dataset.
+
+You won't write any code on this page. You'll read code, look at the resulting tables, and build a mental model of what each verb is *for*.
+
+::: {.callout-tip}
+## How to use this page
+For each verb: read the short description, look at the code, then look at the output table. Ask yourself — *which rows or columns changed, and how?* Answer that question before moving on.
+:::
+
+## The dataset
+
+Every example on this page uses the same small dataset: 2022 state-level health and income data for ten US states. Think of it as a stripped-down version of what you'd pull from CDC BRFSS combined with Census ACS estimates.
+
+| state         | region    | uninsured_rate | median_income | population |
+|---------------|-----------|---------------:|--------------:|-----------:|
+| Massachusetts | Northeast |           0.03 |        89,645 |  6,981,974 |
+| New York      | Northeast |           0.05 |        75,157 | 19,677,151 |
+| Pennsylvania  | Northeast |           0.06 |        72,627 | 12,972,008 |
+| Florida       | South     |           0.13 |        63,062 | 22,244,823 |
+| Georgia       | South     |           0.13 |        66,559 | 10,912,876 |
+| Texas         | South     |           0.18 |        67,321 | 30,029,572 |
+| Illinois      | Midwest   |           0.07 |        76,708 | 12,582,032 |
+| Ohio          | Midwest   |           0.07 |        65,720 | 11,756,058 |
+| California    | West      |           0.07 |        85,300 | 39,029,342 |
+| Nevada        | West      |           0.11 |        72,330 |  3,177,772 |
+
+Assume this table is loaded into R as a data frame called `states`.
+
+---
+
+## 1. The pipe: `|>`
+
+The pipe is not a verb — it's the connector between verbs. Read `|>` as the words **"and then."** It takes whatever is on its left and feeds it as the first input to the function on its right.
+
+```{r}
+states |>
+  filter(region == "South")
+```
+
+::: {.callout-note appearance="minimal"}
+**In plain English:** Take the `states` data, *and then* keep only the rows where region is South.
+:::
+
+**Output:**
+
+| state    | region | uninsured_rate | median_income | population |
+|----------|--------|---------------:|--------------:|-----------:|
+| Florida  | South  |           0.13 |        63,062 | 22,244,823 |
+| Georgia  | South  |           0.13 |        66,559 | 10,912,876 |
+| Texas    | South  |           0.18 |        67,321 | 30,029,572 |
+
+You will see long pipelines that read like sentences: *take the data, and then filter, and then group, and then summarize.* The pipe is what stitches them together.
+
+---
+
+## 2. `filter()` — keep certain rows
+
+`filter()` reduces a dataset by keeping only rows that meet a condition. The number of columns doesn't change. The number of rows usually shrinks.
+
+```{r}
+states |>
+  filter(uninsured_rate > 0.10)
+```
+
+::: {.callout-note appearance="minimal"}
+**In plain English:** Keep only the states where the uninsured rate is greater than 10%.
+:::
+
+**Output:**
+
+| state   | region | uninsured_rate | median_income | population |
+|---------|--------|---------------:|--------------:|-----------:|
+| Florida | South  |           0.13 |        63,062 | 22,244,823 |
+| Georgia | South  |           0.13 |        66,559 | 10,912,876 |
+| Texas   | South  |           0.18 |        67,321 | 30,029,572 |
+| Nevada  | West   |           0.11 |        72,330 |  3,177,772 |
+
+::: {.callout-tip}
+## What to look for
+The condition inside `filter()` is the most important thing to read carefully. `>` vs `>=`, `==` vs `!=`, and `&` vs `|` all change which rows survive. Misreading a filter condition is one of the most common ways analysts (and AI) produce results that look right but aren't.
+:::
+
+---
+
+## 3. `select()` — keep certain columns
+
+`select()` is the column-wise sibling of `filter()`. It keeps the columns you name and drops the rest. The number of rows doesn't change.
+
+```{r}
+states |>
+  select(state, uninsured_rate)
+```
+
+::: {.callout-note appearance="minimal"}
+**In plain English:** From the `states` data, keep only the `state` and `uninsured_rate` columns.
+:::
+
+**Output:**
+
+| state         | uninsured_rate |
+|---------------|---------------:|
+| Massachusetts |           0.03 |
+| New York      |           0.05 |
+| Pennsylvania  |           0.06 |
+| Florida       |           0.13 |
+| Georgia       |           0.13 |
+| Texas         |           0.18 |
+| Illinois      |           0.07 |
+| Ohio          |           0.07 |
+| California    |           0.07 |
+| Nevada        |           0.11 |
+
+---
+
+## 4. `mutate()` — add or change a column
+
+`mutate()` creates a new column or overwrites an existing one. The number of rows stays the same; the number of columns usually grows.
+
+```{r}
+states |>
+  mutate(uninsured_count = uninsured_rate * population) |>
+  select(state, uninsured_rate, population, uninsured_count)
+```
+
+::: {.callout-note appearance="minimal"}
+**In plain English:** Create a new column called `uninsured_count` equal to the uninsured rate multiplied by the population, then show just the four columns we care about.
+:::
+
+**Output:**
+
+| state         | uninsured_rate | population | uninsured_count |
+|---------------|---------------:|-----------:|----------------:|
+| Massachusetts |           0.03 |  6,981,974 |         209,459 |
+| New York      |           0.05 | 19,677,151 |         983,858 |
+| Pennsylvania  |           0.06 | 12,972,008 |         778,320 |
+| Florida       |           0.13 | 22,244,823 |       2,891,827 |
+| Georgia       |           0.13 | 10,912,876 |       1,418,674 |
+| Texas         |           0.18 | 30,029,572 |       5,405,323 |
+| Illinois      |           0.07 | 12,582,032 |         880,742 |
+| Ohio          |           0.07 | 11,756,058 |         822,924 |
+| California    |           0.07 | 39,029,342 |       2,732,054 |
+| Nevada        |           0.11 |  3,177,772 |         349,555 |
+
+::: {.callout-tip}
+## What to look for
+`mutate()` is where a lot of analytic *judgment* lives. Whenever you see a new column being created, ask: *is this the right formula?* and *what units is the result in?* The example above turned a rate into a count by multiplying by population — a small change in arithmetic that completely changes what the column means.
+:::
+
+---
+
+::: {.callout-warning}
+## More to come
+The next four verbs — `group_by()`, `summarize()`, `arrange()`, and `left_join()` — are coming in the next draft of this page. For now, the four above are the ones you'll see most often.
+:::
+
+---
+
+## Check your understanding
+
+When you've read through all eight verbs, complete the short matching quiz so we know you've worked through the page.
+
+[**→ Open the Unit 1 quiz (Google Form)**](#){.btn .btn-primary}
+
+*(Form link will be added before the module goes live.)*
