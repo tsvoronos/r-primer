@@ -1,37 +1,50 @@
 ---
 title: "Unit 1 — The Building Blocks"
 subtitle: "Eight verbs you'll see again and again"
+format: live-html
+engine: knitr
+webr:
+  packages:
+    - dplyr
+live:
+  show-solutions: false
 ---
 
 ## What this unit is for
 
 By the time you arrive on campus, you'll have seen the eight tidyverse "verbs" that make up almost every R script we'll read together this fall. Your goal isn't to memorize syntax. It's to learn to recognize each verb on sight and know what it does to a dataset.
 
-You won't write any code on this page. You'll read code, look at the resulting tables, and build a mental model of what each verb is *for*.
+Most code on this page is **runnable right in your browser** — you can click *Run Code* under any chunk to see the output, and you can edit the code and re-run it. There's no R installation, no setup. (The first chunk you run may take 10–20 seconds to load R; after that everything is instant.)
 
 ::: {.callout-tip}
 ## How to use this page
-For each verb: read the short description, look at the code, then look at the output table. Ask yourself — *which rows or columns changed, and how?* Answer that question before moving on.
+For each verb: read the description, look at the code, and *predict* what the output will look like before you click Run. Then run it and see if you were right. If not, change the code and try again — that's the fastest way to build intuition.
 :::
 
 ## The dataset
 
-Every example on this page uses the same small dataset: 2022 state-level health and income data for ten US states. Think of it as a stripped-down version of what you'd pull from CDC BRFSS combined with Census ACS estimates.
+Every example on this page uses the same small dataset: 2022 state-level health and income data for ten US states. Think of it as a stripped-down version of what you'd pull from CDC BRFSS combined with Census ACS estimates. Run the chunk below to load it, then click on the table to see all 10 rows.
 
-| state         | region    | uninsured_rate | median_income | population |
-|---------------|-----------|---------------:|--------------:|-----------:|
-| Massachusetts | Northeast |           0.03 |        89,645 |  6,981,974 |
-| New York      | Northeast |           0.05 |        75,157 | 19,677,151 |
-| Pennsylvania  | Northeast |           0.06 |        72,627 | 12,972,008 |
-| Florida       | South     |           0.13 |        63,062 | 22,244,823 |
-| Georgia       | South     |           0.13 |        66,559 | 10,912,876 |
-| Texas         | South     |           0.18 |        67,321 | 30,029,572 |
-| Illinois      | Midwest   |           0.07 |        76,708 | 12,582,032 |
-| Ohio          | Midwest   |           0.07 |        65,720 | 11,756,058 |
-| California    | West      |           0.07 |        85,300 | 39,029,342 |
-| Nevada        | West      |           0.11 |        72,330 |  3,177,772 |
+```{webr}
+#| setup: true
+#| exercise: setup-states
+library(dplyr)
 
-Assume this table is loaded into R as a data frame called `states`.
+states <- tibble(
+  state          = c("Massachusetts","New York","Pennsylvania","Florida","Georgia",
+                     "Texas","Illinois","Ohio","California","Nevada"),
+  region         = c("Northeast","Northeast","Northeast","South","South",
+                     "South","Midwest","Midwest","West","West"),
+  uninsured_rate = c(0.03, 0.05, 0.06, 0.13, 0.13, 0.18, 0.07, 0.07, 0.07, 0.11),
+  median_income  = c(89645, 75157, 72627, 63062, 66559, 67321, 76708, 65720, 85300, 72330),
+  population     = c(6981974, 19677151, 12972008, 22244823, 10912876,
+                     30029572, 12582032, 11756058, 39029342, 3177772)
+)
+```
+
+```{webr}
+states
+```
 
 ---
 
@@ -39,7 +52,7 @@ Assume this table is loaded into R as a data frame called `states`.
 
 The pipe is not a verb — it's the connector between verbs. Read `|>` as the words **"and then."** It takes whatever is on its left and feeds it as the first input to the function on its right.
 
-```{r}
+```{webr}
 states |>
   filter(region == "South")
 ```
@@ -47,14 +60,6 @@ states |>
 ::: {.callout-note appearance="minimal"}
 **In plain English:** Take the `states` data, *and then* keep only the rows where region is South.
 :::
-
-**Output:**
-
-| state    | region | uninsured_rate | median_income | population |
-|----------|--------|---------------:|--------------:|-----------:|
-| Florida  | South  |           0.13 |        63,062 | 22,244,823 |
-| Georgia  | South  |           0.13 |        66,559 | 10,912,876 |
-| Texas    | South  |           0.18 |        67,321 | 30,029,572 |
 
 You will see long pipelines that read like sentences: *take the data, and then filter, and then group, and then summarize.* The pipe is what stitches them together.
 
@@ -64,7 +69,7 @@ You will see long pipelines that read like sentences: *take the data, and then f
 
 `filter()` reduces a dataset by keeping only rows that meet a condition. The number of columns doesn't change. The number of rows usually shrinks.
 
-```{r}
+```{webr}
 states |>
   filter(uninsured_rate > 0.10)
 ```
@@ -73,18 +78,9 @@ states |>
 **In plain English:** Keep only the states where the uninsured rate is greater than 10%.
 :::
 
-**Output:**
-
-| state   | region | uninsured_rate | median_income | population |
-|---------|--------|---------------:|--------------:|-----------:|
-| Florida | South  |           0.13 |        63,062 | 22,244,823 |
-| Georgia | South  |           0.13 |        66,559 | 10,912,876 |
-| Texas   | South  |           0.18 |        67,321 | 30,029,572 |
-| Nevada  | West   |           0.11 |        72,330 |  3,177,772 |
-
 ::: {.callout-tip}
-## What to look for
-The condition inside `filter()` is the most important thing to read carefully. `>` vs `>=`, `==` vs `!=`, and `&` vs `|` all change which rows survive. Misreading a filter condition is one of the most common ways analysts (and AI) produce results that look right but aren't.
+## Try it
+Change `> 0.10` to `< 0.10`. Which states show up now? What about `>= 0.13`? The condition inside `filter()` is the most important thing to read carefully — `>` vs `>=`, `==` vs `!=`, and `&` vs `|` all change which rows survive.
 :::
 
 ---
@@ -93,7 +89,7 @@ The condition inside `filter()` is the most important thing to read carefully. `
 
 `select()` is the column-wise sibling of `filter()`. It keeps the columns you name and drops the rest. The number of rows doesn't change.
 
-```{r}
+```{webr}
 states |>
   select(state, uninsured_rate)
 ```
@@ -102,28 +98,13 @@ states |>
 **In plain English:** From the `states` data, keep only the `state` and `uninsured_rate` columns.
 :::
 
-**Output:**
-
-| state         | uninsured_rate |
-|---------------|---------------:|
-| Massachusetts |           0.03 |
-| New York      |           0.05 |
-| Pennsylvania  |           0.06 |
-| Florida       |           0.13 |
-| Georgia       |           0.13 |
-| Texas         |           0.18 |
-| Illinois      |           0.07 |
-| Ohio          |           0.07 |
-| California    |           0.07 |
-| Nevada        |           0.11 |
-
 ---
 
 ## 4. `mutate()` — add or change a column
 
 `mutate()` creates a new column or overwrites an existing one. The number of rows stays the same; the number of columns usually grows.
 
-```{r}
+```{webr}
 states |>
   mutate(uninsured_count = uninsured_rate * population) |>
   select(state, uninsured_rate, population, uninsured_count)
@@ -132,21 +113,6 @@ states |>
 ::: {.callout-note appearance="minimal"}
 **In plain English:** Create a new column called `uninsured_count` equal to the uninsured rate multiplied by the population, then show just the four columns we care about.
 :::
-
-**Output:**
-
-| state         | uninsured_rate | population | uninsured_count |
-|---------------|---------------:|-----------:|----------------:|
-| Massachusetts |           0.03 |  6,981,974 |         209,459 |
-| New York      |           0.05 | 19,677,151 |         983,858 |
-| Pennsylvania  |           0.06 | 12,972,008 |         778,320 |
-| Florida       |           0.13 | 22,244,823 |       2,891,827 |
-| Georgia       |           0.13 | 10,912,876 |       1,418,674 |
-| Texas         |           0.18 | 30,029,572 |       5,405,323 |
-| Illinois      |           0.07 | 12,582,032 |         880,742 |
-| Ohio          |           0.07 | 11,756,058 |         822,924 |
-| California    |           0.07 | 39,029,342 |       2,732,054 |
-| Nevada        |           0.11 |  3,177,772 |         349,555 |
 
 ::: {.callout-tip}
 ## What to look for
