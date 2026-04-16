@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -118,8 +152,20 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#what-this-unit-is-for" id="toc-what-this-unit-is-for" class="nav-link active" data-scroll-target="#what-this-unit-is-for">What this unit is for</a></li>
+  <li><a href="#the-dataset" id="toc-the-dataset" class="nav-link" data-scroll-target="#the-dataset">The dataset</a></li>
+  <li><a href="#the-pipe" id="toc-the-pipe" class="nav-link" data-scroll-target="#the-pipe">1. The pipe: <code>|&gt;</code></a></li>
+  <li><a href="#filter-keep-certain-rows" id="toc-filter-keep-certain-rows" class="nav-link" data-scroll-target="#filter-keep-certain-rows">2. <code>filter()</code> — keep certain rows</a></li>
+  <li><a href="#select-keep-certain-columns" id="toc-select-keep-certain-columns" class="nav-link" data-scroll-target="#select-keep-certain-columns">3. <code>select()</code> — keep certain columns</a></li>
+  <li><a href="#mutate-add-or-change-a-column" id="toc-mutate-add-or-change-a-column" class="nav-link" data-scroll-target="#mutate-add-or-change-a-column">4. <code>mutate()</code> — add or change a column</a></li>
+  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">Check your understanding</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -127,6 +173,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Unit 1 — The Building Blocks</h1>
+<p class="subtitle lead">Eight verbs you’ll see again and again</p>
 </div>
 
 
@@ -143,9 +190,447 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Content forthcoming.</p>
+<section id="what-this-unit-is-for" class="level2">
+<h2 class="anchored" data-anchor-id="what-this-unit-is-for">What this unit is for</h2>
+<p>By the time you arrive on campus, you’ll have seen the eight tidyverse “verbs” that make up almost every R script we’ll read together this fall. Your goal isn’t to memorize syntax. It’s to learn to recognize each verb on sight and know what it does to a dataset.</p>
+<p>You won’t write any code on this page. You’ll read code, look at the resulting tables, and build a mental model of what each verb is <em>for</em>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+How to use this page
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For each verb: read the short description, look at the code, then look at the output table. Ask yourself — <em>which rows or columns changed, and how?</em> Answer that question before moving on.</p>
+</div>
+</div>
+</section>
+<section id="the-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="the-dataset">The dataset</h2>
+<p>Every example on this page uses the same small dataset: 2022 state-level health and income data for ten US states. Think of it as a stripped-down version of what you’d pull from CDC BRFSS combined with Census ACS estimates.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 15%">
+<col style="width: 23%">
+<col style="width: 21%">
+<col style="width: 17%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>state</th>
+<th>region</th>
+<th style="text-align: right;">uninsured_rate</th>
+<th style="text-align: right;">median_income</th>
+<th style="text-align: right;">population</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Massachusetts</td>
+<td>Northeast</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">89,645</td>
+<td style="text-align: right;">6,981,974</td>
+</tr>
+<tr class="even">
+<td>New York</td>
+<td>Northeast</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">75,157</td>
+<td style="text-align: right;">19,677,151</td>
+</tr>
+<tr class="odd">
+<td>Pennsylvania</td>
+<td>Northeast</td>
+<td style="text-align: right;">0.06</td>
+<td style="text-align: right;">72,627</td>
+<td style="text-align: right;">12,972,008</td>
+</tr>
+<tr class="even">
+<td>Florida</td>
+<td>South</td>
+<td style="text-align: right;">0.13</td>
+<td style="text-align: right;">63,062</td>
+<td style="text-align: right;">22,244,823</td>
+</tr>
+<tr class="odd">
+<td>Georgia</td>
+<td>South</td>
+<td style="text-align: right;">0.13</td>
+<td style="text-align: right;">66,559</td>
+<td style="text-align: right;">10,912,876</td>
+</tr>
+<tr class="even">
+<td>Texas</td>
+<td>South</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">67,321</td>
+<td style="text-align: right;">30,029,572</td>
+</tr>
+<tr class="odd">
+<td>Illinois</td>
+<td>Midwest</td>
+<td style="text-align: right;">0.07</td>
+<td style="text-align: right;">76,708</td>
+<td style="text-align: right;">12,582,032</td>
+</tr>
+<tr class="even">
+<td>Ohio</td>
+<td>Midwest</td>
+<td style="text-align: right;">0.07</td>
+<td style="text-align: right;">65,720</td>
+<td style="text-align: right;">11,756,058</td>
+</tr>
+<tr class="odd">
+<td>California</td>
+<td>West</td>
+<td style="text-align: right;">0.07</td>
+<td style="text-align: right;">85,300</td>
+<td style="text-align: right;">39,029,342</td>
+</tr>
+<tr class="even">
+<td>Nevada</td>
+<td>West</td>
+<td style="text-align: right;">0.11</td>
+<td style="text-align: right;">72,330</td>
+<td style="text-align: right;">3,177,772</td>
+</tr>
+</tbody>
+</table>
+<p>Assume this table is loaded into R as a data frame called <code>states</code>.</p>
+<hr>
+</section>
+<section id="the-pipe" class="level2">
+<h2 class="anchored" data-anchor-id="the-pipe">1. The pipe: <code>|&gt;</code></h2>
+<p>The pipe is not a verb — it’s the connector between verbs. Read <code>|&gt;</code> as the words <strong>“and then.”</strong> It takes whatever is on its left and feeds it as the first input to the function on its right.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>states <span class="sc">|&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(region <span class="sc">==</span> <span class="st">"South"</span>)</span></code></pre></div>
+</div>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>In plain English:</strong> Take the <code>states</code> data, <em>and then</em> keep only the rows where region is South.</p>
+</div>
+</div>
+</div>
+<p><strong>Output:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>state</th>
+<th>region</th>
+<th style="text-align: right;">uninsured_rate</th>
+<th style="text-align: right;">median_income</th>
+<th style="text-align: right;">population</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Florida</td>
+<td>South</td>
+<td style="text-align: right;">0.13</td>
+<td style="text-align: right;">63,062</td>
+<td style="text-align: right;">22,244,823</td>
+</tr>
+<tr class="even">
+<td>Georgia</td>
+<td>South</td>
+<td style="text-align: right;">0.13</td>
+<td style="text-align: right;">66,559</td>
+<td style="text-align: right;">10,912,876</td>
+</tr>
+<tr class="odd">
+<td>Texas</td>
+<td>South</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">67,321</td>
+<td style="text-align: right;">30,029,572</td>
+</tr>
+</tbody>
+</table>
+<p>You will see long pipelines that read like sentences: <em>take the data, and then filter, and then group, and then summarize.</em> The pipe is what stitches them together.</p>
+<hr>
+</section>
+<section id="filter-keep-certain-rows" class="level2">
+<h2 class="anchored" data-anchor-id="filter-keep-certain-rows">2. <code>filter()</code> — keep certain rows</h2>
+<p><code>filter()</code> reduces a dataset by keeping only rows that meet a condition. The number of columns doesn’t change. The number of rows usually shrinks.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>states <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(uninsured_rate <span class="sc">&gt;</span> <span class="fl">0.10</span>)</span></code></pre></div>
+</div>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>In plain English:</strong> Keep only the states where the uninsured rate is greater than 10%.</p>
+</div>
+</div>
+</div>
+<p><strong>Output:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>state</th>
+<th>region</th>
+<th style="text-align: right;">uninsured_rate</th>
+<th style="text-align: right;">median_income</th>
+<th style="text-align: right;">population</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Florida</td>
+<td>South</td>
+<td style="text-align: right;">0.13</td>
+<td style="text-align: right;">63,062</td>
+<td style="text-align: right;">22,244,823</td>
+</tr>
+<tr class="even">
+<td>Georgia</td>
+<td>South</td>
+<td style="text-align: right;">0.13</td>
+<td style="text-align: right;">66,559</td>
+<td style="text-align: right;">10,912,876</td>
+</tr>
+<tr class="odd">
+<td>Texas</td>
+<td>South</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">67,321</td>
+<td style="text-align: right;">30,029,572</td>
+</tr>
+<tr class="even">
+<td>Nevada</td>
+<td>West</td>
+<td style="text-align: right;">0.11</td>
+<td style="text-align: right;">72,330</td>
+<td style="text-align: right;">3,177,772</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+What to look for
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The condition inside <code>filter()</code> is the most important thing to read carefully. <code>&gt;</code> vs <code>&gt;=</code>, <code>==</code> vs <code>!=</code>, and <code>&amp;</code> vs <code>|</code> all change which rows survive. Misreading a filter condition is one of the most common ways analysts (and AI) produce results that look right but aren’t.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="select-keep-certain-columns" class="level2">
+<h2 class="anchored" data-anchor-id="select-keep-certain-columns">3. <code>select()</code> — keep certain columns</h2>
+<p><code>select()</code> is the column-wise sibling of <code>filter()</code>. It keeps the columns you name and drops the rest. The number of rows doesn’t change.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>states <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(state, uninsured_rate)</span></code></pre></div>
+</div>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>In plain English:</strong> From the <code>states</code> data, keep only the <code>state</code> and <code>uninsured_rate</code> columns.</p>
+</div>
+</div>
+</div>
+<p><strong>Output:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>state</th>
+<th style="text-align: right;">uninsured_rate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Massachusetts</td>
+<td style="text-align: right;">0.03</td>
+</tr>
+<tr class="even">
+<td>New York</td>
+<td style="text-align: right;">0.05</td>
+</tr>
+<tr class="odd">
+<td>Pennsylvania</td>
+<td style="text-align: right;">0.06</td>
+</tr>
+<tr class="even">
+<td>Florida</td>
+<td style="text-align: right;">0.13</td>
+</tr>
+<tr class="odd">
+<td>Georgia</td>
+<td style="text-align: right;">0.13</td>
+</tr>
+<tr class="even">
+<td>Texas</td>
+<td style="text-align: right;">0.18</td>
+</tr>
+<tr class="odd">
+<td>Illinois</td>
+<td style="text-align: right;">0.07</td>
+</tr>
+<tr class="even">
+<td>Ohio</td>
+<td style="text-align: right;">0.07</td>
+</tr>
+<tr class="odd">
+<td>California</td>
+<td style="text-align: right;">0.07</td>
+</tr>
+<tr class="even">
+<td>Nevada</td>
+<td style="text-align: right;">0.11</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="mutate-add-or-change-a-column" class="level2">
+<h2 class="anchored" data-anchor-id="mutate-add-or-change-a-column">4. <code>mutate()</code> — add or change a column</h2>
+<p><code>mutate()</code> creates a new column or overwrites an existing one. The number of rows stays the same; the number of columns usually grows.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>states <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">uninsured_count =</span> uninsured_rate <span class="sc">*</span> population) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(state, uninsured_rate, population, uninsured_count)</span></code></pre></div>
+</div>
+<div class="callout callout-style-simple callout-note no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>In plain English:</strong> Create a new column called <code>uninsured_count</code> equal to the uninsured rate multiplied by the population, then show just the four columns we care about.</p>
+</div>
+</div>
+</div>
+<p><strong>Output:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>state</th>
+<th style="text-align: right;">uninsured_rate</th>
+<th style="text-align: right;">population</th>
+<th style="text-align: right;">uninsured_count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Massachusetts</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: right;">6,981,974</td>
+<td style="text-align: right;">209,459</td>
+</tr>
+<tr class="even">
+<td>New York</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">19,677,151</td>
+<td style="text-align: right;">983,858</td>
+</tr>
+<tr class="odd">
+<td>Pennsylvania</td>
+<td style="text-align: right;">0.06</td>
+<td style="text-align: right;">12,972,008</td>
+<td style="text-align: right;">778,320</td>
+</tr>
+<tr class="even">
+<td>Florida</td>
+<td style="text-align: right;">0.13</td>
+<td style="text-align: right;">22,244,823</td>
+<td style="text-align: right;">2,891,827</td>
+</tr>
+<tr class="odd">
+<td>Georgia</td>
+<td style="text-align: right;">0.13</td>
+<td style="text-align: right;">10,912,876</td>
+<td style="text-align: right;">1,418,674</td>
+</tr>
+<tr class="even">
+<td>Texas</td>
+<td style="text-align: right;">0.18</td>
+<td style="text-align: right;">30,029,572</td>
+<td style="text-align: right;">5,405,323</td>
+</tr>
+<tr class="odd">
+<td>Illinois</td>
+<td style="text-align: right;">0.07</td>
+<td style="text-align: right;">12,582,032</td>
+<td style="text-align: right;">880,742</td>
+</tr>
+<tr class="even">
+<td>Ohio</td>
+<td style="text-align: right;">0.07</td>
+<td style="text-align: right;">11,756,058</td>
+<td style="text-align: right;">822,924</td>
+</tr>
+<tr class="odd">
+<td>California</td>
+<td style="text-align: right;">0.07</td>
+<td style="text-align: right;">39,029,342</td>
+<td style="text-align: right;">2,732,054</td>
+</tr>
+<tr class="even">
+<td>Nevada</td>
+<td style="text-align: right;">0.11</td>
+<td style="text-align: right;">3,177,772</td>
+<td style="text-align: right;">349,555</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+What to look for
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>mutate()</code> is where a lot of analytic <em>judgment</em> lives. Whenever you see a new column being created, ask: <em>is this the right formula?</em> and <em>what units is the result in?</em> The example above turned a rate into a count by multiplying by population — a small change in arithmetic that completely changes what the column means.</p>
+</div>
+</div>
+<hr>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+More to come
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The next four verbs — <code>group_by()</code>, <code>summarize()</code>, <code>arrange()</code>, and <code>left_join()</code> — are coming in the next draft of this page. For now, the four above are the ones you’ll see most often.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="check-your-understanding" class="level2">
+<h2 class="anchored" data-anchor-id="check-your-understanding">Check your understanding</h2>
+<p>When you’ve read through all eight verbs, complete the short matching quiz so we know you’ve worked through the page.</p>
+<p><a href="#" class="btn btn-primary"><strong>→ Open the Unit 1 quiz (Google Form)</strong></a></p>
+<p><em>(Form link will be added before the module goes live.)</em></p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
