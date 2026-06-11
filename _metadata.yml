@@ -1,0 +1,14 @@
+# Shared metadata for every page in the site: wires up the interactive
+# exercise components (assets/exercises.js). To enable AI feedback on
+# .free-response questions, set aiFeedbackUrl to the deployed Worker URL
+# (see ai-feedback/README.md). Left empty, students self-check against
+# the model answer instead.
+css: assets/exercises.css
+include-in-header:
+  - text: |
+      <script>
+        window.EXERCISE_CONFIG = { aiFeedbackUrl: "" };
+      </script>
+include-after-body:
+  - text: |
+      <script src="assets/exercises.js"></script>

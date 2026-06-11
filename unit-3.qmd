@@ -1,5 +1,235 @@
 ---
 title: "Unit 3 — Spot the Problem"
+subtitle: "The code runs. The output looks fine. Something is wrong."
+format: live-html
+engine: knitr
+webr:
+  packages:
+    - dplyr
+live:
+  show-solutions: false
 ---
 
-Content forthcoming.
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}}
+
+## What this unit is for
+
+Everything you read in Units 1 and 2 was correct code. That ends now.
+
+Each exercise below shows you a short analysis and the claim an analyst made from it. The code **runs without errors** and the output **looks plausible** — but in every case something is wrong: a mistaken assumption, a silent data problem, or a number that doesn't mean what the analyst says it means. R will not warn you. The only defense is reading carefully and thinking about what the numbers *should* look like.
+
+For each exercise:
+
+1. **Describe** what the code actually did (the Unit 2 skill).
+2. **Identify** what's wrong.
+3. **Explain** why the output is misleading — ideally using what you know about the policy world, not just the code.
+
+## The dataset
+
+We're back to the ten-state health insurance data from Unit 1 — same columns, same values. It loads automatically; run the chunk to remind yourself what's in it.
+
+```{webr}
+#| include: false
+#| autorun: true
+library(dplyr)
+
+states <- tibble(
+  state          = c("Massachusetts","New York","Pennsylvania","Florida","Georgia",
+                     "Texas","Illinois","Ohio","California","Nevada"),
+  region         = c("Northeast","Northeast","Northeast","South","South",
+                     "South","Midwest","Midwest","West","West"),
+  uninsured_rate = c(0.03, 0.05, 0.06, 0.13, 0.13, 0.18, 0.07, 0.07, 0.07, 0.11),
+  median_income  = c(89645, 75157, 72627, 63062, 66559, 67321, 76708, 65720, 85300, 72330),
+  population     = c(6981974, 19677151, 12972008, 22244823, 10912876,
+                     30029572, 12582032, 11756058, 39029342, 3177772)
+)
+
+programs <- tribble(
+  ~state,          ~program,                         ~year_started,
+  "Massachusetts", "Health Connector Outreach",      2014,
+  "Massachusetts", "Community Navigator Grants",     2018,
+  "New York",      "NY State of Health Navigators",  2014,
+  "New York",      "Essential Plan Outreach",        2016,
+  "New York",      "GetCoveredNYC",                  2017,
+  "Texas",         "Enroll Texas Coalition",         2015,
+  "Texas",         "Houston Health Navigators",      2019,
+  "California",    "Covered California Outreach",    2014,
+  "California",    "Health4All Campaign",            2016,
+  "California",    "Storefront Enrollment",          2019,
+  "Florida",       "Covering Florida Navigators",    2014,
+  "Georgia",       "Georgians for a Healthy Future", 2015,
+  "Illinois",      "Get Covered Illinois",           2014,
+  "Ohio",          "Ohio Benefit Bank Outreach",     2015
+)
+```
+
+```{webr}
+states
+```
+
+---
+
+## Exercise 1 — "The average state"
+
+An analyst wants a single headline number for the briefing and writes:
+
+```{webr}
+states |>
+  summarize(overall_uninsured = mean(uninsured_rate))
+```
+
+> *"Across our ten states, the uninsured rate is 9.0%."*
+
+The arithmetic is correct — the ten rates really do average to 0.09. Now think about what that number represents.
+
+::: {.mcq}
+**What's the most important problem with calling this "the uninsured rate across our ten states"?**
+
+- [ ] `mean()` should have been `median()` — switching to the median changes the number, but it doesn't fix what's conceptually wrong with averaging this column.
+- [x] Every state counts equally, so Nevada (3 million people) moves the average exactly as much as California (39 million) — right: this is the average *of state rates*, not the rate for the *population* of these states. The big high-uninsurance states get diluted.
+- [ ] The rates should have been summed, not averaged — summing rates produces a meaningless number (0.90 = "90%"?); the issue is *how* the average treats states, not sum vs. mean.
+
+::: {.mcq-explanation}
+The population-weighted rate — total uninsured people divided by total population — comes out to about **9.7%**, noticeably higher than 9.0%, because the biggest states (Texas, Florida, California) have above-average uninsurance. Whenever you see `mean()` applied to a column that is itself a *rate*, ask: should every row really count equally?
+:::
+:::
+
+Try fixing it yourself — edit the chunk below so each state contributes in proportion to its population. (One approach: compute uninsured *people* with `mutate()`, then divide totals, like Unit 2's Exercise 4.)
+
+```{webr}
+states |>
+  summarize(overall_uninsured = mean(uninsured_rate))
+```
+
+---
+
+## Exercise 2 — The unit trap
+
+The team decides percentages read better than proportions, so an analyst rescales the column and then pulls out the "high-uninsurance" states for a map:
+
+```{webr}
+high_uninsured <- states |>
+  mutate(uninsured_pct = uninsured_rate * 100) |>
+  filter(uninsured_pct > 0.10)
+
+high_uninsured |>
+  select(state, uninsured_pct)
+```
+
+> *"Ten of our ten states have a high-uninsurance problem."*
+
+::: {.mcq}
+**Run the chunk. Why did all ten states survive the filter?**
+
+- [x] The threshold wasn't rescaled along with the column: after `* 100`, the values run from 3 to 18, and *every* number in that range beats 0.10 — right: the filter compares percent-scale values against a proportion-scale threshold.
+- [ ] `filter()` ran before `mutate()`, so the threshold applied to the old column — pipelines run top to bottom; `mutate()` had already created `uninsured_pct` when `filter()` used it.
+- [ ] All ten states genuinely have high uninsurance — Massachusetts is at 3%, among the lowest in the nation; an analysis that flags *it* as high-uninsurance should set off alarm bells.
+:::
+
+::: {.free-response question-id="unit3-ex2"}
+**Write the note you'd send this analyst: what did the code actually do, why is the claim wrong, and what one-character-ish fix would repair it?**
+
+::: {.model-answer}
+The code created a percent version of the uninsured rate (3–18 instead of 0.03–0.18) and then kept states where that percent exceeds 0.10. Since every percent value is far above 0.10, the filter kept all ten states — it did no filtering at all. The claim is wrong because the cutoff was meant on the old scale: "above 0.10" meant "above 10%," but after multiplying by 100 the matching threshold is 10, not 0.10. The fix is `filter(uninsured_pct > 10)` (or filter on the original `uninsured_rate > 0.10` before rescaling). The giveaway in the output is substantive: a "high uninsurance" list that includes Massachusetts, which famously has near-universal coverage, can't be right.
+:::
+
+::: {.grading-notes}
+A strong answer must (1) describe the rescaling and the filter, (2) pinpoint the unit mismatch — the threshold 0.10 is on the proportion scale while the column is now on the percent scale, so every state passes and the filter is vacuous, and (3) give the fix (compare against 10, or filter before rescaling). Bonus credit (not required for "strong") for the domain sanity check that Massachusetts appearing on a high-uninsurance list is implausible. "partial" if the student senses the threshold is wrong but can't articulate the scale mismatch or offers no fix. "needs_work" if they think the code errored, that mutate dropped rows, or that all ten states genuinely have high uninsurance.
+:::
+:::
+
+---
+
+## Exercise 3 — The join that counted people twice
+
+There's a second table on this page, `programs`, listing state outreach programs for insurance enrollment — some states run several, some none:
+
+```{webr}
+programs
+```
+
+An analyst joins it to the state data to size up the reach of outreach efforts:
+
+```{webr}
+states |>
+  left_join(programs, by = "state") |>
+  summarize(
+    rows             = n(),
+    total_population = sum(population)
+  )
+```
+
+> *"Outreach programs operate in states that are home to a combined 324 million people."*
+
+That would be nearly the entire population of the United States — from ten states. Run the chunk and look at the `rows` count before reading on.
+
+::: {.free-response question-id="unit3-ex3"}
+**Describe what happened in the join, explain how the population total got to 324 million, and state what the correct combined population of these ten states is (roughly).**
+
+::: {.model-answer}
+`left_join()` matches each state to its outreach programs, and when a state has several programs its row gets *duplicated* — once per program. California and New York each appear three times, Massachusetts and Texas twice, so the joined table has 16 rows instead of 10. Summing `population` over those 16 rows counts California's 39 million three times, New York's 20 million three times, and so on, inflating the total to about 324 million. The real combined population of the ten states is about 169 million. The lesson: after any join, check the row count before summing anything — duplicated rows turn sums into double-counts. (One more wrinkle: Pennsylvania and Nevada have no programs at all, yet they're still in the total, so even "deduplicated" this number wouldn't measure where programs operate.)
+:::
+
+::: {.grading-notes}
+A strong answer must (1) explain that the join duplicates a state's row once per matching program, growing 10 rows to 16, and (2) connect that to the inflated sum — populations of multi-program states are counted multiple times — and give roughly the right true total (anything near 169–170 million, or simply "about half the claimed figure," is fine). The Pennsylvania/Nevada point (no programs but still counted, since left_join keeps unmatched rows) is bonus, not required. "partial" if the student sees the total is too big and blames the join but can't explain the duplication mechanism. "needs_work" if they think sum() is the wrong function, that the population column is wrong, or that left_join dropped states.
+:::
+:::
+
+---
+
+## Exercise 4 — The regression that proved the opposite
+
+An analyst merges in a Medicaid expansion indicator and runs the regression the team asked for. Read the code *and the data it creates* carefully — the comment matters.
+
+```{webr}
+# expanded = 1 if the state expanded Medicaid by 2022, 0 otherwise
+expansion <- tribble(
+  ~state,          ~expanded,
+  "Massachusetts", 0,
+  "New York",      0,
+  "Pennsylvania",  0,
+  "Florida",       1,
+  "Georgia",       1,
+  "Texas",         1,
+  "Illinois",      0,
+  "Ohio",          0,
+  "California",    0,
+  "Nevada",        0
+)
+
+analysis <- states |>
+  left_join(expansion, by = "state")
+
+lm(uninsured_rate ~ expanded, data = analysis) |>
+  summary()
+```
+
+> *"States that expanded Medicaid have uninsured rates about 8 percentage points* higher *than states that didn't (p < 0.01). Expansion does not appear to reduce uninsurance."*
+
+Before you write — a gut check:
+
+::: {.mcq}
+**Based on what you know about Medicaid expansion (or Unit 1's `medicaid` table), which states actually expanded by 2022?**
+
+- [x] Massachusetts, New York, California, and most of the others — Florida, Georgia, and Texas are the famous holdouts — right: which is exactly the opposite of what this `expansion` table says.
+- [ ] Florida, Georgia, and Texas only — these three are the best-known *non*-expansion states; coding them as the only expanders should look backwards immediately.
+- [ ] None of these ten states — most states (about 40 by 2022) expanded; an all-zero coding for MA, NY, and CA can't be right.
+:::
+
+::: {.free-response question-id="unit3-ex4"}
+**Write your memo: what does the regression actually estimate, what went wrong upstream of it, and what would the (corrected) result most likely show? Why is the analyst's policy conclusion not just wrong but backwards?**
+
+::: {.model-answer}
+The regression compares average uninsured rates between states coded `expanded = 1` and `expanded = 0`; the coefficient (~+0.08) says the "expanded" group runs about 8 points higher. But the indicator is coded backwards: the table assigns 1 to Florida, Georgia, and Texas — the well-known non-expansion states — and 0 to genuine expanders like Massachusetts, New York, and California. The comment says one thing; the data says the opposite. So the regression is really measuring that *non*-expansion states have higher uninsured rates. With the coding fixed, the same coefficient flips sign: expansion states are about 8 points *lower*. The analyst's conclusion is backwards because the only thing wrong was upstream of the model — the regression machinery worked perfectly on miscoded data. (Even corrected, this is a 10-state cross-section, not proof that expansion *caused* the difference.)
+:::
+
+::: {.grading-notes}
+A strong answer must (1) describe what the regression estimates (difference in mean uninsured rate between the two coded groups), (2) identify the upstream error — the 0/1 coding contradicts its own comment and reality, with FL/GA/TX (non-expanders) coded as 1 — caught by domain knowledge or by cross-checking Unit 1's medicaid table, and (3) state that correcting the coding flips the sign: expansion states have roughly 8 points lower uninsurance, so the policy conclusion is inverted. A causality caveat (cross-sectional, 10 states, expansion not random) is bonus, not required. "partial" if the student senses the result contradicts reality but doesn't locate the miscoding, or finds the miscoding but can't say what the corrected result implies. "needs_work" if they accept the analyst's conclusion or blame lm() itself.
+:::
+:::
+
+---
+
+## The habit to take away
+
+Notice what caught each error: not R skills, but **expectations about the world**. A 9% average that hides Texas, a "high-uninsurance" list containing Massachusetts, a ten-state population the size of the whole country, an expansion coefficient with the wrong sign. The code ran fine every time. Unit 4 hands you a full script and asks you to bring both skills at once — narrate it, and question it.

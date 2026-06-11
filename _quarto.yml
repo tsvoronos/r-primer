@@ -31,7 +31,3 @@ format:
     toc: true
     code-copy: false
     code-tools: false
-
-execute:
-  eval: false
-  echo: true

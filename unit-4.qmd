@@ -1,5 +1,192 @@
 ---
 title: "Unit 4 — Full Narration"
+subtitle: "One real script, start to finish"
+format: live-html
+engine: knitr
+webr:
+  packages:
+    - dplyr
+    - ggplot2
+live:
+  show-solutions: false
 ---
 
-Content forthcoming.
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}}
+
+## What this unit is for
+
+This is the capstone. Below is a complete analysis script of the kind a junior analyst might email around: it cleans data, builds new variables, summarizes, plots, and runs a regression — about 35 lines, start to finish. Your job is the one you'll actually face this fall: **read someone else's analysis and narrate what they did, then flag what you'd push back on.**
+
+There are no hints on this page. There are a few quick checkpoint questions to keep you oriented, and two written responses at the end — the narration itself, and the decision you'd question.
+
+## The data
+
+The script analyzes `insurance_panel`: uninsured rates for the same ten states you know from Units 1 and 3, but now tracked **over time** — one row per state per year, 2014–2022 (90 rows). It's pre-loaded; run the chunk to see its shape.
+
+| column | meaning |
+|---|---|
+| `state`, `year` | which state, which year |
+| `population_m` | state population, millions |
+| `expanded` | `TRUE` if the state expanded Medicaid |
+| `uninsured_rate` | share of residents uninsured (proportion, 0–1) |
+| `unemployment_rate` | share of labor force unemployed (proportion, 0–1) |
+
+*(Synthetic data, patterned on real trends — don't cite it.)*
+
+```{webr}
+#| include: false
+#| autorun: true
+library(dplyr)
+library(ggplot2)
+
+set.seed(201)
+state_info <- tibble(
+  state        = c("Massachusetts","New York","Pennsylvania","Florida","Georgia",
+                   "Texas","Illinois","Ohio","California","Nevada"),
+  population_m = c(7.0, 19.7, 13.0, 22.2, 10.9, 30.0, 12.6, 11.8, 39.0, 3.2),
+  expanded     = c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE),
+  rate_2013    = c(0.042, 0.108, 0.097, 0.200, 0.186, 0.222, 0.127, 0.110, 0.172, 0.205)
+)
+
+insurance_panel <- state_info |>
+  cross_join(tibble(year = 2014:2022)) |>
+  mutate(
+    uninsured_rate = rate_2013 -
+      if_else(expanded, 0.011, 0.004) * pmin(year - 2013, 4) -
+      0.0012 * (year - 2013) +
+      if_else(year >= 2018 & year <= 2019, 0.004, 0) +
+      rnorm(n(), 0, 0.002),
+    uninsured_rate = round(pmax(uninsured_rate, 0.025), 3),
+    unemployment_rate = round(0.052 - 0.002 * (year - 2014) +
+      if_else(year == 2020, 0.046, 0) + rnorm(n(), 0, 0.003), 3)
+  ) |>
+  mutate(uninsured_rate = if_else((state == "Nevada" & year == 2015) |
+                                  (state == "Georgia" & year == 2017),
+                                  NA_real_, uninsured_rate)) |>
+  select(state, year, population_m, expanded, uninsured_rate, unemployment_rate)
+```
+
+```{webr}
+insurance_panel
+```
+
+::: {.callout-tip}
+## Two functions you haven't seen
+The script uses `if_else(condition, a, b)` (pick `a` where the condition holds, `b` elsewhere) and `weighted.mean(x, w)` (a mean where each value counts in proportion to its weight `w`). Part of reading real code is meeting unfamiliar functions and inferring what they do from their names and inputs — these two work exactly the way they sound.
+:::
+
+## The script
+
+Read the whole thing before running anything. The chunk produces three outputs: a summary table, a figure, and a regression table.
+
+```{webr}
+# Medicaid expansion and uninsurance, 2014-2022
+# Data: insurance_panel (state-year, n = 90)
+
+# -- 1. Clean ----------------------------------------------------
+# Two state-years are missing the uninsured rate; drop them.
+analysis <- insurance_panel |>
+  filter(!is.na(uninsured_rate)) |>
+  mutate(
+    uninsured_pct    = uninsured_rate * 100,
+    unemployment_pct = unemployment_rate * 100,
+    group            = if_else(expanded, "Expanded Medicaid", "Did not expand")
+  )
+
+# -- 2. Trend by expansion status --------------------------------
+# Population-weighted, so big states count more.
+trend <- analysis |>
+  group_by(group, year) |>
+  summarize(
+    avg_uninsured_pct = weighted.mean(uninsured_pct, population_m),
+    .groups = "drop"
+  )
+
+trend |>
+  filter(year %in% c(2014, 2018, 2022))
+
+# -- 3. Picture --------------------------------------------------
+ggplot(trend, aes(x = year, y = avg_uninsured_pct, color = group)) +
+  geom_line(linewidth = 1) +
+  geom_point() +
+  labs(
+    x = NULL, y = "Uninsured (%)", color = NULL,
+    title = "Uninsured rate by Medicaid expansion status"
+  )
+
+# -- 4. Regression -----------------------------------------------
+model <- lm(uninsured_pct ~ expanded + unemployment_pct, data = analysis)
+summary(model)
+```
+
+---
+
+## Checkpoints
+
+Quick orientation checks before you write. Run the script first if you haven't.
+
+::: {.mcq}
+**1. Which step changes the number of rows in `analysis` compared to `insurance_panel`?**
+
+- [x] The `filter(!is.na(uninsured_rate))` line, which drops the two state-years with missing rates — right: 90 rows in, 88 out. Nothing else adds or removes rows.
+- [ ] The `mutate()` block — `mutate()` adds columns; the row count is untouched.
+- [ ] The `group_by() |> summarize()` step — that collapses rows, but in `trend`, a *separate* object; `analysis` itself keeps all 88 rows.
+:::
+
+::: {.mcq}
+**2. In the `trend` table, what does one row represent?**
+
+- [ ] One state in one year — that was `analysis`; the `summarize()` collapsed the states.
+- [x] One expansion group in one year — right: `group_by(group, year)` leaves one row per group per year, 18 rows in all.
+- [ ] One state across all years — the years are still separate; it's the *states* that were combined.
+:::
+
+::: {.mcq}
+**3. The regression coefficient on `expandedTRUE` is about −10. Why would it be a mistake to read that as "expansion reduced uninsurance by 10 points"?**
+
+- [ ] Because the coefficient isn't statistically significant — it's highly significant; significance isn't the issue here.
+- [x] Because it compares expansion states to non-expansion states *in levels*, and those states differed long before expansion — Texas and Florida had far higher uninsurance than Massachusetts back in 2014 — right: the regression mostly captures pre-existing differences between the two groups, not the change expansion caused.
+- [ ] Because the unemployment control ruined the model — its coefficient is near zero; including it barely changes anything.
+
+::: {.mcq-explanation}
+Look back at the trend table: the gap between the groups was already about 8 points in 2014. The regression pools all years and compares group *levels*, so most of that −10 is history, not policy effect. The plot actually contains the better evidence: the expansion group's line *falls faster* (roughly −4 points vs. −2 points over the period). Comparing changes rather than levels is the heart of the difference-in-differences designs you'll meet this fall.
+:::
+:::
+
+---
+
+## Your narration
+
+::: {.free-response question-id="unit4-narration"}
+**Write 2–3 paragraphs narrating this analysis for a colleague who hasn't seen the code: what data went in, what the analyst did to it (cleaning, transformations, summaries), what each output shows, and what the headline finding is. Use plain English — no function names required.**
+
+::: {.model-answer}
+The analyst starts with a state-year panel: uninsured and unemployment rates for ten states, each year from 2014 to 2022, plus population and whether the state expanded Medicaid. Two state-year observations are missing an uninsured rate and get dropped, leaving 88 rows. The rates are rescaled from proportions to percentages, and each state is labeled by expansion status.
+
+Next the analyst collapses the data to compare the two groups over time: for each group in each year, a population-weighted average uninsured rate, so big states like California and Texas count in proportion to their size. The printed table snapshots 2014, 2018, and 2022; the line chart shows the full series. Both tell the same story: expansion states started around 12% uninsured and fell to about 8%, while non-expansion states started much higher, around 20%, and drifted down only a couple of points.
+
+Finally, a regression relates the uninsured percentage to expansion status and the unemployment rate. Expansion states average about 10 percentage points lower uninsurance, a large and statistically strong gap; unemployment shows essentially no association in this sample. The headline: expansion states have far less uninsurance and saw faster declines. But the regression compares levels across states that differed before expansion, so the −10 shouldn't be read as the causal effect of expanding.
+:::
+
+::: {.grading-notes}
+Grade as a narration, not a quiz. A strong answer covers, in coherent prose: (1) the data — state-year panel, ten states, 2014-2022, with expansion status; (2) cleaning — dropping the two missing-rate observations (mentioning ~88 remaining rows is bonus) and converting proportions to percentages; (3) the group-year summary — average uninsured rate by expansion group over time, and ideally that it is population-weighted; (4) what the plot/table show — expansion group lower and falling faster (any reasonable reading of levels and trends is fine); (5) the regression — expansion associated with roughly 10 points lower uninsurance, unemployment near zero. Do not require exact numbers; the shape of the story matters more. "strong" requires at least four of the five elements woven into readable prose. "partial" for answers that hit roughly three, or that list steps mechanically without saying what the outputs mean. "needs_work" if major steps are misread (e.g., thinks the regression is at the person level, misses the cleaning entirely, or reverses which group has lower uninsurance).
+:::
+:::
+
+::: {.free-response question-id="unit4-decision"}
+**Name ONE decision this analyst made that you would question before circulating the results, and say why it matters. (There are several defensible choices — pick the one you'd raise first.)**
+
+::: {.model-answer}
+The one I'd raise first: presenting the regression coefficient (−10) as the expansion result. It compares average *levels* between expansion and non-expansion states, but those groups were far apart before expansion did anything — the 2014 gap is already about 8 points. A levels comparison mostly repackages pre-existing differences; comparing each group's *change* over time (about −4 vs. −2 points) is the more honest summary, and even that rests on only three non-expansion states. Other defensible answers: dropping the two missing state-years without asking why they're missing; treating expansion as a fixed yes/no when states expanded in different years; the near-meaningless unemployment control; or generalizing from ten hand-picked states.
+:::
+
+::: {.grading-notes}
+Accept ANY ONE well-argued concern; do not require the model answer's choice. Defensible targets include: levels-vs-changes / pre-existing differences in the regression (the strongest catch); silently dropping the two missing observations; coding expansion as time-invariant when timing varies; only three non-expansion states / tiny sample; no causal identification; generalizing from ten states; weighting choices. "strong" requires naming a specific decision in the script AND a clear account of why it could change the conclusion — not just "correlation isn't causation" boilerplate. "partial" for a valid concern stated vaguely or without consequences. "needs_work" for concerns about things the script didn't do, or pure style complaints (variable names, plot colors).
+:::
+:::
+
+---
+
+## What's next
+
+That's the primer. If you can narrate this script and spot the soft spot in its regression, you're ready for the fall: we'll start from exactly this skill and add the tools — better designs, real data, and the statistics to back up the instincts you've been building.

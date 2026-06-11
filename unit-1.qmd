@@ -8,19 +8,9 @@ webr:
     - dplyr
 live:
   show-solutions: false
-css: assets/exercises.css
-include-in-header:
-  - text: |
-      <script>
-        // Set aiFeedbackUrl to the deployed Worker URL to enable AI feedback
-        // on .free-response questions (see ai-feedback/README.md). Left empty,
-        // students self-check against the model answer instead.
-        window.EXERCISE_CONFIG = { aiFeedbackUrl: "" };
-      </script>
-include-after-body:
-  - text: |
-      <script src="assets/exercises.js"></script>
 ---
+
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}}
 
 ## What this unit is for
 
@@ -35,11 +25,11 @@ For each verb: read the description, look at the code, and *predict* what the ou
 
 ## The dataset
 
-Every example on this page uses the same small dataset: 2022 state-level health and income data for ten US states. Think of it as a stripped-down version of what you'd pull from CDC BRFSS combined with Census ACS estimates. Run the chunk below to load it, then click on the table to see all 10 rows.
+Every example on this page uses the same small dataset: 2022 state-level health and income data for ten US states. Think of it as a stripped-down version of what you'd pull from CDC BRFSS combined with Census ACS estimates. The data loads automatically in the background — click *Run Code* below to see all 10 rows.
 
 ```{webr}
-#| setup: true
-#| exercise: setup-states
+#| include: false
+#| autorun: true
 library(dplyr)
 
 states <- tibble(
@@ -51,6 +41,12 @@ states <- tibble(
   median_income  = c(89645, 75157, 72627, 63062, 66559, 67321, 76708, 65720, 85300, 72330),
   population     = c(6981974, 19677151, 12972008, 22244823, 10912876,
                      30029572, 12582032, 11756058, 39029342, 3177772)
+)
+
+medicaid <- tibble(
+  state = c("Massachusetts","New York","Pennsylvania","Florida","Georgia",
+            "Texas","Illinois","Ohio","California","Nevada"),
+  expanded_medicaid = c("Yes","Yes","Yes","No","No","No","Yes","Yes","Yes","Yes")
 )
 ```
 
@@ -133,9 +129,88 @@ states |>
 
 ---
 
-::: {.callout-warning}
-## More to come
-The next four verbs — `group_by()`, `summarize()`, `arrange()`, and `left_join()` — are coming in the next draft of this page. For now, the four above are the ones you'll see most often.
+## 5. `group_by()` — flag rows as belonging to groups
+
+`group_by()` is the quietest verb: by itself it changes *nothing you can see* in the data. It just attaches a label saying "treat these rows as groups." Look closely at the output below — the rows and columns are identical, but there's a new line near the top: `Groups: region [4]`.
+
+```{webr}
+states |>
+  group_by(region)
+```
+
+::: {.callout-note appearance="minimal"}
+**In plain English:** Take the `states` data, *and then* mark the rows as grouped by region — so whatever comes next happens within each region separately.
+:::
+
+`group_by()` almost never appears alone. It's the setup for the next verb.
+
+---
+
+## 6. `summarize()` — collapse many rows into a few
+
+`summarize()` boils a dataset down: many rows in, one row out — or one row *per group* if the data was grouped first. This `group_by() |> summarize()` pair is the single most common pattern in policy data analysis.
+
+```{webr}
+states |>
+  group_by(region) |>
+  summarize(
+    avg_uninsured = mean(uninsured_rate),
+    n_states      = n()
+  )
+```
+
+::: {.callout-note appearance="minimal"}
+**In plain English:** Group the states by region, *and then* collapse each region to a single row showing its average uninsured rate and how many states it contains.
+:::
+
+::: {.callout-tip}
+## What to look for
+After `summarize()`, the original rows are *gone* — ten states became four regions. When you read a `summarize()`, always ask: *what does one row of the output represent now?* The answer changed, and every number in the row is a summary, not a raw value.
+:::
+
+---
+
+## 7. `arrange()` — sort rows
+
+`arrange()` reorders rows. Nothing is added, nothing is dropped — the data just gets sorted. Wrap a column in `desc()` to sort largest-first.
+
+```{webr}
+states |>
+  arrange(desc(uninsured_rate)) |>
+  select(state, uninsured_rate)
+```
+
+::: {.callout-note appearance="minimal"}
+**In plain English:** Sort the states from highest to lowest uninsured rate, *and then* show just the state name and the rate.
+:::
+
+You'll usually see `arrange()` at the *end* of a pipeline, as a presentation step: it answers "which ones are highest?"
+
+---
+
+## 8. `left_join()` — combine two tables
+
+Real analyses almost always pull from more than one source. `left_join()` matches rows from a second table onto the first, using a shared ID column (`by = ...`). "Left" means: keep *every* row of the first (left) table, whether or not it finds a match.
+
+There's a second small table pre-loaded on this page, `medicaid`, which records whether each state expanded Medicaid:
+
+```{webr}
+medicaid
+```
+
+```{webr}
+states |>
+  left_join(medicaid, by = "state") |>
+  select(state, uninsured_rate, expanded_medicaid)
+```
+
+::: {.callout-note appearance="minimal"}
+**In plain English:** Take the `states` data, *and then* attach each state's Medicaid expansion status from the `medicaid` table, matching on the state name.
+:::
+
+::: {.callout-tip}
+## What to look for
+A join is where datasets quietly grow or shrink. Here every state matched exactly one row, so we still have 10 rows. When you read a join, ask: *could a row on the left match zero rows (producing an `NA`) or several rows (duplicating data)?* Unit 3 will show you what happens when an analyst forgets to ask.
 :::
 
 ---
@@ -185,6 +260,28 @@ Reading order matters: each verb hands its result to the next one. First the row
 - [ ] The dataset has fewer rows — `mutate()` never changes the number of rows; that's `filter()`'s job.
 - [ ] The `uninsured_rate` column is replaced — a new name on the left of `=` creates a *new* column; `uninsured_rate` is only overwritten if you reuse its exact name.
 - [x] The dataset has the same rows plus one new column — `mutate()` adds `uninsured_pct` and leaves everything else alone.
+:::
+
+::: {.mcq}
+**5. How many rows does this return?**
+
+```r
+states |>
+  group_by(region) |>
+  summarize(avg_income = mean(median_income))
+```
+
+- [ ] 10 — one per state — the states are gone after `summarize()`; each *region* became a single row.
+- [x] 4 — one per region — right: `summarize()` collapses each group down to one row.
+- [ ] 1 — a single overall average — that's what you'd get *without* the `group_by()` line.
+:::
+
+::: {.mcq}
+**6. What does `states |> left_join(medicaid, by = "state")` do to the number of rows?**
+
+- [x] Nothing — all 10 states stay, each gaining the `expanded_medicaid` column — right: a left join keeps every row of the left table, and here each state matches exactly one row.
+- [ ] Keeps only states that appear in both tables — that's an *inner* join; `left_join()` keeps unmatched rows and fills in `NA`.
+- [ ] Doubles the rows to 20 — rows only multiply when one state matches *several* rows in the second table; here each matches one.
 :::
 
 ### Explain it in plain English

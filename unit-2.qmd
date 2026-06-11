@@ -1,5 +1,286 @@
 ---
 title: "Unit 2 — Read a Pipeline"
+subtitle: "From three lines to a regression"
+format: live-html
+engine: knitr
+webr:
+  packages:
+    - dplyr
+    - ggplot2
+live:
+  show-solutions: false
 ---
 
-Content forthcoming.
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}}
+
+## What this unit is for
+
+Unit 1 taught you the verbs one at a time. This unit puts them together. You'll read six pipelines that grow from three lines to a full regression, and for each one you'll practice the core skill of this course: **describing in plain English what the code did.**
+
+Work each exercise the same way:
+
+1. **Read the code** — don't run it yet.
+2. **Predict** what the output will look like (some exercises ask you a quick question first).
+3. **Write your description** in the answer box and check it.
+4. **Then run the chunk** and see if the output matches what you said.
+
+The early exercises have hints. The later ones don't — that's on purpose.
+
+::: {.callout-note}
+The first chunk you run may take 20–30 seconds while R loads in your browser (this page also loads a plotting library). After that, everything is instant.
+:::
+
+## The dataset
+
+This unit uses a new dataset: `districts`, with 2022 figures for 16 Massachusetts school districts. Each row is one school district.
+
+| column | meaning |
+|---|---|
+| `district` | district name |
+| `county` | county the district sits in |
+| `enrollment` | number of students |
+| `pct_low_income` | percent of students from low-income families |
+| `per_pupil_spend` | spending per student, in dollars |
+| `math_prof` | percent of students scoring proficient in math |
+
+*(Figures are simplified for teaching — don't cite them.)*
+
+```{webr}
+#| include: false
+#| autorun: true
+library(dplyr)
+library(ggplot2)
+
+districts <- tribble(
+  ~district,     ~county,     ~enrollment, ~pct_low_income, ~per_pupil_spend, ~math_prof,
+  "Boston",      "Suffolk",   48000, 71, 25500, 33,
+  "Chelsea",     "Suffolk",    6200, 83, 21800, 22,
+  "Revere",      "Suffolk",    7600, 64, 18900, 30,
+  "Winthrop",    "Suffolk",    1900, 38, 16800, 44,
+  "Cambridge",   "Middlesex",  7000, 45, 34800, 49,
+  "Somerville",  "Middlesex",  4900, 52, 25100, 41,
+  "Newton",      "Middlesex", 11600, 14, 22500, 67,
+  "Lowell",      "Middlesex", 14800, 67, 18300, 28,
+  "Worcester",   "Worcester", 24500, 70, 19200, 26,
+  "Shrewsbury",  "Worcester",  6100, 16, 14900, 65,
+  "Leominster",  "Worcester",  5900, 55, 16400, 34,
+  "Milford",     "Worcester",  4200, 41, 17100, 45,
+  "Springfield", "Hampden",   24800, 85, 21100, 18,
+  "Holyoke",     "Hampden",    5300, 88, 23600, 15,
+  "Chicopee",    "Hampden",    7000, 66, 17800, 27,
+  "Westfield",   "Hampden",    5600, 43, 16500, 42
+)
+```
+
+```{webr}
+districts
+```
+
+---
+
+## Exercise 1 — Two verbs (warm-up)
+
+```{webr}
+districts |>
+  filter(pct_low_income > 60) |>
+  select(district, math_prof)
+```
+
+Before writing anything, make a prediction:
+
+::: {.mcq}
+**How many rows will the output have?**
+
+- [ ] 16 — `filter()` drops every district at or below 60% low-income; count the table above — not all of them survive.
+- [x] 8 — right: eight districts have `pct_low_income` above 60.
+- [ ] 2 — more districts than that clear the 60% bar; check the `pct_low_income` column again.
+:::
+
+::: {.callout-tip collapse="true"}
+## Hint
+Two steps: first the *rows* shrink, then the *columns* shrink. Your description should say which rows survive (in policy terms, not code terms) and what's left to look at.
+:::
+
+::: {.free-response question-id="unit2-ex1"}
+**In plain English, what does this pipeline do?**
+
+::: {.model-answer}
+It takes the district data and keeps only the districts where more than 60% of students are from low-income families — the highest-poverty districts. Then it shows just two columns: the district name and its math proficiency rate.
+:::
+
+::: {.grading-notes}
+A strong answer says (1) the rows are reduced to districts where more than 60 percent of students are low-income (any phrasing like "high-poverty districts," "districts where most students are low-income" is fine as long as the direction of the condition is right), and (2) the output shows only the district name and math proficiency columns. It does not need to say how many rows result. Mark "partial" if it gets the filter direction right but forgets the column selection or vice versa. Mark "needs_work" if the filter direction is backwards (keeping low-poverty districts) or it claims columns are dropped by filter / rows by select.
+:::
+:::
+
+---
+
+## Exercise 2 — Creating a number that isn't in the data
+
+```{webr}
+districts |>
+  mutate(total_spend_m = enrollment * per_pupil_spend / 1000000) |>
+  arrange(desc(total_spend_m)) |>
+  select(district, enrollment, total_spend_m)
+```
+
+::: {.callout-tip collapse="true"}
+## Hint
+The middle of the pipeline creates a new column. Work out its *units*: students × dollars-per-student ÷ 1,000,000 = ? Then notice what `arrange(desc(...))` does to the order, and which district you'd expect on top.
+:::
+
+::: {.free-response question-id="unit2-ex2"}
+**In plain English, what does this pipeline do, and what does the first row of the output represent?**
+
+::: {.model-answer}
+For each district it computes total spending — enrollment times per-pupil spending — expressed in millions of dollars, then sorts the districts from biggest total budget to smallest and shows the district, its enrollment, and that total. The first row is Boston, because total spending is driven mostly by size: a big district with moderate per-pupil spending outspends a small district with high per-pupil spending.
+:::
+
+::: {.grading-notes}
+A strong answer must (1) explain that the new column is total district spending, computed as enrollment times per-pupil spending, in millions of dollars (the millions conversion can be loosely stated), (2) note the sort is from largest to smallest total spending, and (3) identify that the top row will be a large district (naming Boston is ideal but "the biggest district" is acceptable). The key insight is that the ranking reflects district size, not generosity per student — an answer that confuses total spending with per-pupil spending is "partial" at best. "needs_work" if the student misreads mutate as filtering or doesn't understand a new column was created.
+:::
+:::
+
+---
+
+## Exercise 3 — Group and collapse
+
+```{webr}
+districts |>
+  group_by(county) |>
+  summarize(
+    avg_math_prof = mean(math_prof),
+    n_districts   = n()
+  )
+```
+
+::: {.mcq}
+**After this code runs, what does one row of the output represent?**
+
+- [ ] One school district — the districts were collapsed by `summarize()`; they're no longer individually visible.
+- [x] One county — right: `group_by(county)` plus `summarize()` boils the data down to a single row per county.
+- [ ] One student — the data never had student-level rows; it started at the district level and got *more* aggregated, not less.
+:::
+
+::: {.free-response question-id="unit2-ex3"}
+**In plain English: what does this code do, and what would you tell a policymaker the `avg_math_prof` number for Hampden County means — including one caution about how it's computed?**
+
+::: {.model-answer}
+The code groups the 16 districts by county and collapses each county to one row showing the average math proficiency across its districts and the number of districts. For Hampden County, `avg_math_prof` is the average of the four district proficiency rates (about 25.5). The caution: it's an *unweighted* average of districts — tiny Holyoke counts exactly as much as Springfield, which has almost five times the students — so it is not the proficiency rate of the average *student* in Hampden County.
+:::
+
+::: {.grading-notes}
+A strong answer must (1) describe collapsing to one row per county with the mean of district proficiency and a district count, and (2) raise the unweighted-average caution: every district counts equally regardless of enrollment, so this is an average of districts, not of students. Accept any phrasing of that idea (e.g. "small districts count as much as big ones"). "partial" if the mechanics are right but the caution is missing or vague. "needs_work" if the student thinks rows are still districts or that mean() is summing.
+:::
+:::
+
+---
+
+## Exercise 4 — A longer pipeline, no hints
+
+This is the kind of block you'll see in real analysis scripts: a `mutate` before the grouping, another after it, and a sort at the end. Take it one verb at a time.
+
+```{webr}
+districts |>
+  mutate(low_income_students = enrollment * pct_low_income / 100) |>
+  group_by(county) |>
+  summarize(
+    students            = sum(enrollment),
+    low_income_students = sum(low_income_students)
+  ) |>
+  mutate(pct_low_income = 100 * low_income_students / students) |>
+  arrange(desc(pct_low_income))
+```
+
+::: {.free-response question-id="unit2-ex4"}
+**In plain English, what does this pipeline compute, and how is the final `pct_low_income` different from just averaging each county's district percentages?**
+
+::: {.model-answer}
+First it converts each district's low-income *percentage* into a *count* of low-income students (enrollment × percent ÷ 100). Then it groups by county and adds up, for each county, total enrollment and total low-income students. The second `mutate` divides those totals to get each county's overall share of students who are low-income, and the result is sorted from highest share to lowest. This is a student-weighted figure: big districts influence it in proportion to their size. Simply averaging the district percentages would let a small district move the county number as much as a huge one — exercise 3's caution, now fixed.
+:::
+
+::: {.grading-notes}
+A strong answer traces all three stages: (1) converting each district's percent to a count of low-income students, (2) summing enrollment and low-income counts within county, (3) dividing the sums to get a county-level share, sorted descending. It must also articulate the contrast: this version weights districts by enrollment (it's the share of all students in the county), whereas averaging district percentages treats every district equally. "partial" if the mechanics are mostly right but the weighted-vs-unweighted contrast is missing or garbled. "needs_work" if the student misses that counts are computed before grouping or reads the final mutate as acting on districts rather than county totals.
+:::
+:::
+
+---
+
+## Exercise 5 — Reading a plot, not just a table
+
+Pipelines often end in a picture instead of a table. `ggplot()` gets its own treatment in the fall — for now you only need to read the `aes()` ("aesthetics") line, which maps columns of the data to parts of the plot.
+
+```{webr}
+districts |>
+  ggplot(aes(x = pct_low_income, y = math_prof)) +
+  geom_point(aes(size = enrollment)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    x = "Share of students from low-income families (%)",
+    y = "Math proficiency (%)",
+    size = "Enrollment"
+  )
+```
+
+::: {.mcq}
+**What does each point on this plot represent?**
+
+- [x] One school district — right: the data going in has one row per district, and nothing in the pipeline collapsed it.
+- [ ] One county — nothing grouped or summarized here; the counties never enter the plot.
+- [ ] One student — the dataset is district-level; individual students are never visible in it.
+
+::: {.mcq-explanation}
+The first question to ask of *any* plot is the same one you ask after a `summarize()`: what does one mark on this chart represent? Here, district-level rows feed straight into `ggplot()`, so each point is a district, sized by its enrollment. The line is a simple trend line fit through the points (`method = "lm"` — the same `lm` you'll meet in the next exercise).
+:::
+:::
+
+::: {.free-response question-id="unit2-ex5"}
+**Run the chunk, then describe in plain English what this figure shows. What is the relationship, and which axis is which?**
+
+::: {.model-answer}
+Each point is a school district, plotted by its share of low-income students (horizontal axis) against its math proficiency rate (vertical axis), with bigger circles for bigger districts. The points slope strongly downward and the fitted line confirms it: districts with more low-income students have substantially lower math proficiency. The relationship is tight — most districts sit close to the line. It describes an association across districts; on its own it doesn't say poverty causes low scores.
+:::
+
+::: {.grading-notes}
+A strong answer identifies (1) each point as a district, (2) the axes (low-income share on x, math proficiency on y; mentioning point size as enrollment is a bonus, not required), and (3) the clear negative/downward relationship. Stating it as an association rather than causation is a plus; do not require it, but if the student makes a strong causal claim ("poverty causes low scores"), cap at "partial" and note the distinction. "needs_work" if the direction of the relationship is wrong or the axes are swapped.
+:::
+:::
+
+---
+
+## Exercise 6 — A regression
+
+The last stop in most policy analyses: a regression. `lm()` ("linear model") isn't a tidyverse verb, but you'll see it constantly. Read the formula `math_prof ~ pct_low_income + per_pupil_spend` as: *model math proficiency as a function of the low-income share and per-pupil spending.*
+
+```{webr}
+model <- lm(math_prof ~ pct_low_income + per_pupil_spend, data = districts)
+summary(model)
+```
+
+Run the chunk and find the `Coefficients` table — it's the part analysts actually read.
+
+::: {.mcq}
+**The estimate for `pct_low_income` is about −0.68. What does that mean here?**
+
+- [x] Comparing districts, each additional percentage point of low-income students is associated with math proficiency lower by about 0.68 points — right: a coefficient is the predicted change in the outcome per one-unit change in that variable, holding the others fixed.
+- [ ] 68% of districts are low-income — the coefficient is a slope, not a share of districts.
+- [ ] Low-income students score 0.68% on the math test — the outcome is the *district's* proficiency rate; the coefficient describes how it shifts, not anyone's score.
+:::
+
+::: {.free-response question-id="unit2-ex6"}
+**In plain English: what question does this regression ask, and what do the results say about per-pupil spending? Mention one reason to be careful before concluding "spending doesn't matter much."**
+
+::: {.model-answer}
+The regression asks how district math proficiency relates to two things at once: the share of low-income students and per-pupil spending, each holding the other constant. The low-income share dominates — strongly negative and precisely estimated. The spending coefficient looks tiny (about 0.0005) but its units are *per dollar*: it implies roughly half a point of proficiency per extra $1,000 per student, a modest positive association. Cautions: this is 16 districts in one year, and spending isn't assigned randomly — high-poverty districts often receive *more* money precisely because they face greater needs, which can mask spending's effect. The regression describes associations, not what would happen if a district's budget were changed.
+:::
+
+::: {.grading-notes}
+A strong answer must (1) describe the regression as relating math proficiency to both low-income share and spending simultaneously / holding the other constant, (2) read the spending result correctly — a small positive coefficient, ideally noticing the per-dollar units mean it's about 0.5 points per $1,000 rather than "essentially zero", and (3) give at least one sound caution: tiny sample, association vs. causation, or that spending may be targeted toward needier districts (reverse causality / confounding). Accept any one caution. "partial" if the regression's purpose is right but the spending interpretation ignores units entirely or no caution is offered. "needs_work" if the student misreads which variable is the outcome or interprets coefficients as percentages of districts.
+:::
+:::
+
+---
+
+## Where you stand
+
+If you could write a confident description for exercises 4 and 6, you have the core skill. Unit 3 raises the stakes: the pipelines will *look* just as tidy, but each one contains a mistake — and the output won't warn you.
