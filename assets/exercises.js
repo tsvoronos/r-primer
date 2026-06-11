@@ -196,15 +196,25 @@
           })
         })
           .then(function (resp) {
-            if (!resp.ok) throw new Error("HTTP " + resp.status);
-            return resp.json();
+            return resp
+              .json()
+              .catch(function () { return {}; })
+              .then(function (data) {
+                if (!resp.ok) {
+                  var detail = (data && (data.detail || data.error)) || "";
+                  throw new Error("HTTP " + resp.status + (detail ? " — " + detail : ""));
+                }
+                return data;
+              });
           })
           .then(function (data) {
             status.textContent = "";
             renderFeedback(output, data);
           })
-          .catch(function () {
-            status.textContent = "Couldn't reach the feedback service — use “Show model answer” to self-check.";
+          .catch(function (err) {
+            var why = err && err.message ? err.message : "network error";
+            status.textContent =
+              "Feedback service error (" + why + ") — use “Show model answer” to self-check.";
           })
           .finally(function () {
             aiButton.disabled = false;

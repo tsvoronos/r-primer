@@ -117,10 +117,10 @@ Grade the student's answer.`;
 
     try {
       const response = await client.responses.create({
-        model: env.OPENAI_MODEL || "gpt-5.5",
+        model: env.OPENAI_MODEL || "gpt-5.4-mini",
         instructions: SYSTEM_PROMPT,
         input: userPrompt,
-        max_output_tokens: 1024,
+        max_output_tokens: 2048,
         reasoning: { effort: "low" },
         safety_identifier: env.OPENAI_SAFETY_IDENTIFIER || undefined,
         text: {
@@ -135,12 +135,25 @@ Grade the student's answer.`;
 
       const text = response.output_text;
       if (!text) {
-        return json(env, { error: "No feedback produced" }, 502);
+        return json(
+          env,
+          { error: "No feedback produced", detail: `response status: ${response.status}` },
+          502,
+        );
       }
       return json(env, JSON.parse(text));
     } catch (err) {
+      // Surface enough detail that the cause is visible from the browser
+      // (no secrets pass through OpenAI error messages).
       console.error("OpenAI API error:", err);
-      return json(env, { error: "Feedback service unavailable" }, 502);
+      const detail = [
+        err?.status ? `status ${err.status}` : null,
+        err?.code || err?.error?.code || null,
+        String(err?.error?.message || err?.message || "").slice(0, 300) || null,
+      ]
+        .filter(Boolean)
+        .join(" | ");
+      return json(env, { error: "Feedback service unavailable", detail }, 502);
     }
   },
 };
