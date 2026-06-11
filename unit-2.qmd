@@ -80,13 +80,17 @@ districts
 
 ## Exercise 1 — Two verbs (warm-up)
 
-```{webr}
+**Step 1 — read it.** Don't run it yet. Trace what each line does before you predict.
+
+::: {.read-first}
+```r
 districts |>
   filter(pct_low_income > 60) |>
   select(district, math_prof)
 ```
+:::
 
-Before writing anything, make a prediction:
+**Step 2 — predict.**
 
 ::: {.mcq}
 **How many rows will the output have?**
@@ -102,7 +106,7 @@ Two steps: first the *rows* shrink, then the *columns* shrink. Your description 
 :::
 
 ::: {.free-response question-id="unit2-ex1"}
-**In plain English, what does this pipeline do?**
+**Step 3 — in plain English, what does this pipeline do?**
 
 ::: {.model-answer}
 It takes the district data and keeps only the districts where more than 60% of students are from low-income families — the highest-poverty districts. Then it shows just two columns: the district name and its math proficiency rate.
@@ -112,6 +116,14 @@ It takes the district data and keeps only the districts where more than 60% of s
 A strong answer says (1) the rows are reduced to districts where more than 60 percent of students are low-income (any phrasing like "high-poverty districts," "districts where most students are low-income" is fine as long as the direction of the condition is right), and (2) the output shows only the district name and math proficiency columns. It does not need to say how many rows result. Mark "partial" if it gets the filter direction right but forgets the column selection or vice versa. Mark "needs_work" if the filter direction is backwards (keeping low-poverty districts) or it claims columns are dropped by filter / rows by select.
 :::
 :::
+
+**Step 4 — now run it** and see if you were right.
+
+```{webr}
+districts |>
+  filter(pct_low_income > 60) |>
+  select(district, math_prof)
+```
 
 ---
 
