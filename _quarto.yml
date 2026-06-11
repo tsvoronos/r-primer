@@ -26,10 +26,3 @@ website:
         text: "4. Full Narration"
   page-footer:
     center: "Harvard Kennedy School · API-201"
-
-format:
-  html:
-    theme: cosmo
-    toc: true
-    code-copy: false
-    code-tools: false
