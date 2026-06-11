@@ -1,0 +1,181 @@
+/* Choose-your-own-adventure component (assets/adventure.js). */
+
+#adventure {
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  background: #f8f9fa;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.adv-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.adv-ctl {
+  border: 1px solid #ced4da;
+  background: #fff;
+  color: #495057;
+  border-radius: 0.375rem;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+}
+
+.adv-ctl:hover {
+  border-color: #2780e3;
+  color: #2780e3;
+}
+
+.adv-transcript {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.adv-note {
+  font-style: italic;
+  color: #6c757d;
+  font-size: 0.92em;
+  margin: 0.25rem 0 0.5rem;
+}
+
+.adv-note em {
+  font-style: normal;
+}
+
+.adv-turn-ai {
+  align-self: stretch;
+}
+
+.adv-bubble {
+  position: relative;
+  border-radius: 0.6rem;
+  padding: 0.65rem 0.9rem 0.6rem;
+  line-height: 1.45;
+}
+
+.adv-bubble p {
+  margin: 0 0 0.5rem;
+}
+
+.adv-bubble p:last-child {
+  margin-bottom: 0;
+}
+
+.adv-bubble-ai {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  margin-right: 12%;
+}
+
+.adv-turn-you {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.adv-bubble-you {
+  background: #2780e3;
+  color: #fff;
+  margin-left: 12%;
+}
+
+.adv-speaker {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.25rem;
+  color: #6c757d;
+}
+
+.adv-bubble-you .adv-speaker {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.adv-code,
+.adv-output {
+  border-radius: 0.35rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.82em;
+  line-height: 1.4;
+  margin: 0.5rem 0;
+  overflow-x: auto;
+}
+
+.adv-code {
+  background: #f1f3f5;
+  border: 1px solid #e0e3e7;
+}
+
+.adv-output {
+  background: #212529;
+  color: #e9ecef;
+}
+
+.adv-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.adv-choice {
+  text-align: left;
+  border: 1px solid #2780e3;
+  background: #fff;
+  color: #1d6bbf;
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.adv-choice:hover {
+  background: #eef5fd;
+}
+
+.adv-choice p {
+  margin: 0;
+}
+
+.adv-ending {
+  border: 1px solid #b8e0c8;
+  background: #f0faf4;
+  border-radius: 0.5rem;
+  padding: 0.9rem 1.1rem;
+  margin-top: 0.75rem;
+}
+
+.adv-ending-title {
+  font-weight: 700;
+  font-size: 1.05em;
+  margin-bottom: 0.5rem;
+}
+
+.adv-flags {
+  margin-top: 0.75rem;
+  font-size: 0.92em;
+}
+
+.adv-flags ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.2rem;
+  list-style: none;
+}
+
+.adv-flags li {
+  margin-bottom: 0.2rem;
+  color: #198754;
+}
+
+.adv-replay-hint {
+  margin: 0.75rem 0 0;
+  font-size: 0.85em;
+  color: #6c757d;
+}

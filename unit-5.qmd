@@ -1,0 +1,35 @@
+---
+title: "Unit 5 — The AI Analyst"
+subtitle: "A choose-your-own-adventure"
+css: assets/adventure.css
+include-after-body:
+  - text: |
+      <script src="assets/adventure-story.js"></script>
+      <script src="assets/adventure.js"></script>
+---
+
+## What this unit is for
+
+Everything in this primer has been preparing you for a working life where you'll rarely run the code yourself. You'll ask an AI tool to do it — and the tool will be fast, fluent, confident, and **exactly as good as the questions you ask it.** It will make reasonable-sounding decisions without telling you. Some of them will be wrong in ways that are invisible in the output and obvious in the code.
+
+This unit is a simulation of that. You're an analyst with a 3 PM deadline, an AI assistant named **Ada**, and the ten-state dataset you know from Units 1 and 3. Ada is genuinely capable — it will also, like every analyst (and every AI), make judgment calls and mistakes. Every trap in this story is one you've already met in Units 1–4. Your job is to catch them *before* they reach the Secretary.
+
+::: {.callout-tip}
+## How to play
+Read each exchange, then choose what to say. There are **seven endings** — some triumphant, several instructively embarrassing. Use **Rewind** to back up one choice and try another road, or **Start over** to replay from the top. Your place is saved if you leave the page. There's no grade; the endings *are* the feedback — finding the bad ones on purpose is a perfectly good way to learn.
+:::
+
+One note: Ada is scripted — this is a story, not a live AI. (The 💬 helper in the corner is the live one, and yes, you can ask it for hints here too. It knows the rules.)
+
+::: {#adventure}
+:::
+
+## After you've found a few endings
+
+Three questions worth a minute of reflection:
+
+1. Which mistakes would you have caught a month ago, before starting this primer?
+2. Every bad ending shared a root cause: a decision the AI made **silently**. What questions force those decisions into the open? ("How is this weighted?" "Show me the coded variable." "How many rows after the join?")
+3. The best ending didn't come from distrusting the AI — Ada did all the work, fast. It came from supervising it like a colleague. What's the difference?
+
+That instinct — *delegate the typing, never the judgment* — is the single most useful thing you can carry into the fall, and into every meeting after that.

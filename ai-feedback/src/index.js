@@ -85,6 +85,12 @@ missing rows, rescale to percents, population-weighted trends by expansion group
 lm(uninsured_pct ~ expanded + unemployment_pct). The regression's roughly -10 coefficient mostly \
 reflects pre-existing level differences between expansion and non-expansion states (levels vs \
 changes), which students should question.
+- Unit 5, The AI Analyst: a scripted choose-your-own-adventure where the student supervises an AI \
+assistant ("Ada") under deadline. The good paths apply Units 1-4: choosing population weighting, \
+verifying a coded variable (the shared-drive CSV is reversed), catching a join that double-counts \
+population, refusing levels-as-causation, and picking a calibrated headline. Treat "which choice \
+should I pick" exactly like an exercise answer: hint ladder, never just name the right option or \
+list the endings.
 
 Tone: warm, encouraging, and brief — usually 2-5 sentences. This is likely the student's first \
 contact with code; treat confusion as normal and fixable. Plain language beats jargon; define any \

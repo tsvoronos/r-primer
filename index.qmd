@@ -24,7 +24,7 @@ Along the way you'll meet three kinds of questions:
 
 None of it is graded or tracked. Your answers live only in your own browser, and redoing a page is a feature, not a confession.
 
-## The four units
+## The five units
 
 Work through them in order — each one builds on the last.
 
@@ -43,6 +43,10 @@ Everything in Units 1 and 2 was correct code. Here, nothing is. Four analyses th
 ### [Unit 4 — Full Narration](unit-4.qmd) · ~2 hours
 
 The capstone. One complete 35-line analysis script — cleaning, transforming, summarizing, plotting, regression — of the kind a junior analyst might email around. You'll narrate the whole thing for a colleague who hasn't seen the code, and flag the one decision you'd push back on before the results get circulated.
+
+### [Unit 5 — The AI Analyst](unit-5.qmd) · ~45 minutes
+
+A choose-your-own-adventure finale. You have a 3 PM deadline, an AI assistant that works fast and decides things silently, and one slide to get right. Seven endings — most of them instructively embarrassing — each turning on whether you catch a mistake you learned to spot in Units 1–4. Replaying to find the other endings is the point.
 
 ## When you get stuck
 

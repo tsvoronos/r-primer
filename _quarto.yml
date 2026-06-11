@@ -7,6 +7,8 @@ project:
   resources:
     - assets/exercises.js
     - assets/assistant.js
+    - assets/adventure.js
+    - assets/adventure-story.js
 
 website:
   title: "Reading R Code"
@@ -24,5 +26,7 @@ website:
         text: "3. Spot the Problem"
       - href: unit-4.qmd
         text: "4. Full Narration"
+      - href: unit-5.qmd
+        text: "5. The AI Analyst"
   page-footer:
     center: "Harvard Kennedy School · API-201"
