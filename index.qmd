@@ -46,7 +46,7 @@ The capstone. One complete 35-line analysis script — cleaning, transforming, s
 
 ### [Unit 5 — The AI Analyst](unit-5.qmd) · ~45 minutes
 
-A choose-your-own-adventure finale. You have a 3 PM deadline, an AI assistant that works fast and decides things silently, and one slide to get right. Seven endings — most of them instructively embarrassing — each turning on whether you catch a mistake you learned to spot in Units 1–4. Replaying to find the other endings is the point.
+A choose-your-own-adventure finale. You have a 3 PM deadline, an AI assistant that works fast and decides things silently, and one slide to get right. Eight endings — most of them instructively embarrassing — each turning on whether you catch a mistake you learned to spot in Units 1–4. Replaying to find the other endings is the point.
 
 ## When you get stuck
 

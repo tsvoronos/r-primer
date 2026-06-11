@@ -16,7 +16,7 @@ This unit is a simulation of that. You're an analyst with a 3 PM deadline, an AI
 
 ::: {.callout-tip}
 ## How to play
-Read each exchange, then choose what to say. There are **seven endings** — some triumphant, several instructively embarrassing. Use **Rewind** to back up one choice and try another road, or **Start over** to replay from the top. Your place is saved if you leave the page. There's no grade; the endings *are* the feedback — finding the bad ones on purpose is a perfectly good way to learn.
+Read each exchange, then choose what to say. There are **eight endings** — some triumphant, several instructively embarrassing. Use **Rewind** to back up one choice and try another road, or **Start over** to replay from the top. Your place is saved if you leave the page. There's no grade; the endings *are* the feedback — finding the bad ones on purpose is a perfectly good way to learn.
 :::
 
 One note: Ada is scripted — this is a story, not a live AI. (The 💬 helper in the corner is the live one, and yes, you can ask it for hints here too. It knows the rules.)

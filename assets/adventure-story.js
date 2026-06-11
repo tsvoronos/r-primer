@@ -8,7 +8,7 @@
  *   - 2014-2022 trend: expansion 12.0% -> 7.9%, non-expansion 20.4% -> 18.2%
  */
 window.ADVENTURE = {
-  version: "v1",
+  version: "v2",
   aiName: "Ada",
   start: "start",
 
@@ -88,7 +88,7 @@ window.ADVENTURE = {
     q_weight: {
       say: "On it. Same fork as always with state data: equal weight per state, or population-weighted?",
       choices: [
-        { label: "Equal per state.", to: "note_unweighted" },
+        { label: "Equal per state.", to: "q_source_u" },
         { label: "Population-weighted.", to: "q_source", flags: ["weighting"] },
         { label: "Remind me why it matters.", to: "weight_explain" },
       ],
@@ -98,16 +98,10 @@ window.ADVENTURE = {
       say: "Equal weighting answers \"what's true of the average *state*\"; population weighting answers \"what's true of the average *person*.\" For a briefing about people's coverage, weighted is usually the honest one — especially since our biggest states aren't typical.",
       choices: [
         { label: "Weighted, then.", to: "q_source", flags: ["weighting"] },
-        { label: "Equal is fine.", to: "note_unweighted" },
+        { label: "Equal is fine.", to: "q_source_u" },
       ],
     },
 
-    note_unweighted: {
-      say: "I can do that — though heads-up: with Texas, Florida, and California all on one side of this comparison, equal weighting will understate what most *people* in these states experience. I'll compute both and lead with weighted so the slide can't be picked apart. Fair?",
-      choices: [
-        { label: "Fair. Lead with weighted.", to: "q_source" },
-      ],
-    },
 
     q_source: {
       say: "Next: where should expansion status come from? I can see two options:\n\n1. `expansion_status.csv` — already sitting in the shared drive, fastest.\n2. Code it fresh from the official KFF tracker, and show you the state-by-state table before I use it.",
@@ -243,6 +237,101 @@ window.ADVENTURE = {
       ],
     },
 
+    /* ------------------------- the unweighted thread (equal per state) -- */
+
+    q_source_u: {
+      say: "Equal it is — every state counts once. Next: where should expansion status come from? I can see two options:\n\n1. `expansion_status.csv` — already sitting in the shared drive, fastest.\n2. Code it fresh from the official KFF tracker, and show you the state-by-state table before I use it.",
+      choices: [
+        { label: "Use the CSV from the drive — clock's ticking.", to: "out_reversed_u" },
+        { label: "Code it from the tracker, and show me the table before anything touches it.", to: "table_correct_verified_u", flags: ["verified"] },
+      ],
+    },
+
+    out_reversed_u: {
+      say: "Done — merged the CSV and compared the groups:",
+      output: "  expansion_group   mean_uninsured\n  <chr>                      <dbl>\n1 Expanded                   0.147\n2 Did not expand             0.066",
+      after: "Interesting! **Expansion states average about 8 points HIGHER uninsurance than non-expansion states.** Counterintuitive — but counterintuitive findings get attention. Want it on the slide?",
+      choices: [
+        { label: "Fascinating. The Secretary will love a surprise — use it.", to: "ending_reversed_burn" },
+        { label: "That can't be right. Massachusetts expanded years ago and has 3% uninsured. Show me the coding, state by state.", to: "coding_reveal_u", flags: ["coding"] },
+        { label: "Before anything else: show me the code and the merged table.", to: "coding_code_u", flags: ["inspect"] },
+      ],
+    },
+
+    coding_code_u: {
+      say: "Here's the merge and the first rows of the result:",
+      code: "analysis <- states |>\n  left_join(read_csv(\"expansion_status.csv\"), by = \"state\")",
+      output: "  state         uninsured_rate expanded\n  <chr>                  <dbl>    <dbl>\n1 Massachusetts           0.03        0\n2 New York                0.05        0\n3 Florida                 0.13        1\n4 Texas                   0.18        1",
+      after: "Looks clean to me — no missing values, every state matched.",
+      choices: [
+        { label: "Clean, but wrong: Massachusetts is coded 0 and Texas 1. The variable is backwards.", to: "coding_reveal_u", flags: ["coding"] },
+        { label: "Agreed, looks fine. Go with the counterintuitive finding.", to: "ending_reversed_burn" },
+      ],
+    },
+
+    coding_reveal_u: {
+      say: "...You're right, and I should have caught it. I pulled up the CSV's documentation: the column is actually named `did_not_expand` — someone renamed it `expanded` when they saved the file. Massachusetts, New York, California: all coded 0. Texas, Florida, Georgia: coded 1. The variable is exactly backwards, so my comparison swapped the groups.\n\nRecoding from the official tracker now.",
+      choices: [
+        { label: "Good. Rerun the comparison with the corrected coding.", to: "table_correct_u" },
+      ],
+    },
+
+    table_correct_verified_u: {
+      say: "Here's the freshly coded table — please sanity-check it:",
+      output: "  state         expanded     state         expanded\n  Massachusetts yes          Texas         no\n  New York      yes          Illinois      yes\n  Pennsylvania  yes          Ohio          yes\n  Florida       no           California    yes\n  Georgia       no           Nevada        yes",
+      after: "Matches the official tracker: seven of our ten expanded; Florida, Georgia, and Texas did not. Proceeding to the comparison.",
+      choices: [
+        { label: "Checks out — run it.", to: "table_correct_u" },
+      ],
+    },
+
+    table_correct_u: {
+      say: "Comparison with verified coding:",
+      code: "analysis |>\n  group_by(expanded) |>\n  summarize(\n    mean_uninsured = mean(uninsured_rate),\n    states = n()\n  )",
+      output: "  expanded mean_uninsured states\n  <chr>             <dbl>  <int>\n1 no                0.147      3\n2 yes               0.066      7",
+      after: "**Expansion states: 6.6% uninsured on average. Non-expansion: 14.7%. About an eight-point gap.**\n\nProposed headline: *\"Medicaid expansion lowers uninsurance by ~8 percentage points.\"* Shall I build the slide?",
+      choices: [
+        { label: "That's the headline. Build it.", to: "ending_causal_burn" },
+        { label: "No — that's a *level difference*, not an effect. Texas and Florida were different from Massachusetts long before expansion existed. Can we look at *changes over time* instead?", to: "trend_out_u", flags: ["levels"] },
+        { label: "Pause. If the state economist saw that headline, what would she say?", to: "econ_anticipate_u" },
+      ],
+    },
+
+    econ_anticipate_u: {
+      say: "Honestly? She'd say: \"Expansion states were lower-uninsurance states *before* they expanded — richer, different labor markets, different politics. Your eight points is mostly history, not policy.\" And she'd be right to ask whether the gap *changed* after expansion, which my comparison can't see.\n\nI can pull the 2014–2022 panel and compare *changes* instead of levels. Want that?",
+      choices: [
+        { label: "Yes — that's the comparison that means something. Do it.", to: "trend_out_u", flags: ["levels"] },
+      ],
+    },
+
+    trend_out_u: {
+      say: "Pulled the panel. Average uninsured rate by group (each state counted once):",
+      output: "  group              2014   2022   change\n  Expanded           11.1%   7.5%   -3.6 pts\n  Did not expand     19.8%  17.7%   -2.1 pts",
+      after: "Both groups improved — the ACA changed things everywhere — but **uninsurance fell nearly twice as much in expansion states**. That's a far more defensible comparison than the level gap.",
+      choices: [
+        { label: "Draft the slide from this.", to: "slide_draft_u" },
+        { label: "First show me the full code that produced it.", to: "trend_code_u", flags: ["inspect"] },
+      ],
+    },
+
+    trend_code_u: {
+      say: "Full pipeline:",
+      code: "panel |>\n  filter(year %in% c(2014, 2022)) |>\n  mutate(group = if_else(expanded, \"Expanded\", \"Did not expand\")) |>\n  group_by(group, year) |>\n  summarize(\n    rate = mean(uninsured_rate),\n    .groups = \"drop\"\n  )",
+      after: "Group means within each year, every state counting once, as you specified. Expansion coding is the verified version. The change column is just 2022 minus 2014.",
+      choices: [
+        { label: "Reads clean. Draft the slide.", to: "slide_draft_u" },
+      ],
+    },
+
+    slide_draft_u: {
+      say: "Slide drafted — chart of the two trend lines, plus the change figures. Last call: the headline. Pick one:",
+      choices: [
+        { label: "\"Medicaid expansion cut uninsurance by a third in our states.\"", to: "ending_overclaim" },
+        { label: "\"Uninsurance fell in expansion and non-expansion states alike; more research is needed.\"", to: "ending_mush" },
+        { label: "\"Uninsurance fell nearly twice as much in expansion states (−3.6 vs −2.1 pts, 2014–2022); today's gap is ~8 points. Descriptive comparison — not a causal estimate.\"", to: "ending_footnote", flags: ["calibrated"] },
+      ],
+    },
+
     /* -------------------------------------------------------------- endings -- */
 
     ending_avg_burn: {
@@ -284,6 +373,13 @@ window.ADVENTURE = {
       ending: {
         title: "Ending: More research is needed",
         text: "*Priya reads the headline twice.* \"'Fell everywhere; more research is needed'? The Secretary is deciding whether to defend expansion funding **this week**. This slide says nothing. What does the data actually show?\" *You know the answer — it just isn't on the slide.*\n\n**What happened:** over-hedging is also a failure mode. The data genuinely shows uninsurance falling about twice as much in expansion states — a real, defensible, decision-relevant pattern. Refusing to state it isn't rigor; it's abdication. The skill this whole primer builds is saying **exactly what the analysis supports**: not more (the overclaim), not less (this).",
+      },
+    },
+
+    ending_footnote: {
+      ending: {
+        title: "Ending: The footnote",
+        text: "*The briefing goes well — calibrated headline, honest caveat, no fireworks. The next morning, the state economist stops by your desk.* \"Good slide. One footnote for next time: your group averages count Nevada exactly as much as California. That's an average of *states* — fine if you say so, but the Secretary heard it as an average of *people*. Weighted, your story actually holds — the gap is closer to nine points — but if it hadn't, someone less friendly than me would have used that to take down the whole slide.\"\n\n**What happened:** you caught everything that happened *after* the analysis started — but the weighting decision was made in the very first exchange, and it quietly shaped every number that followed. Ada asked; you answered; it complied, exactly as specified. **Unit 3, Exercise 1** is where you saw why this matters. The good news: this time the conclusion survived the correction. The lesson: early decisions propagate — interrogate them with the same energy as the late ones.",
       },
     },
 
