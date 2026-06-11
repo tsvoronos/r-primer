@@ -12,11 +12,15 @@ output, low reasoning effort), and returns:
 ```
 
 It also serves `POST /chat` for the site's tutoring sidebar
-(`assets/assistant.js`): the page sends the recent conversation plus the
-current page title, and the Worker returns `{ "reply": "…" }`. The
-assistant's system prompt scopes it to the primer's content, keeps it in
-hint-first mode, and lets it become more forthcoming only after repeated
-genuine attempts. Conversations live in the student's browser
+(`assets/assistant.js`): the page sends the recent conversation, the current
+page title, and a snapshot of the page (visible text, the R code in each
+chunk, and the hidden answer keys, labeled instructor-only), and the Worker
+returns `{ "reply": "…" }`. The assistant's system prompt scopes it to the
+primer's content and enforces a four-step Socratic "hint ladder": concept
+pointer → narrowed hint → key idea → full walkthrough, advancing only when
+the student shows genuine attempts. Every code box on the site also gets a
+"Help me understand this" button that sends that snippet (including student
+edits) to the helper. Conversations live in the student's browser
 (localStorage) — nothing is stored server-side.
 
 Every request is tagged with your `safety_identifier` (OpenAI's stable
