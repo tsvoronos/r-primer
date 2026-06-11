@@ -193,3 +193,40 @@
     bottom: 4.75rem;
   }
 }
+
+/* "Help me understand this" buttons under code blocks */
+.assistant-help-btn {
+  display: block;
+  margin: -0.5rem 0 1rem auto;
+  border: none;
+  background: none;
+  color: #2780e3;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.1rem 0.25rem;
+}
+
+.assistant-help-btn::before {
+  content: "\1F6DF  "; /* ring buoy */
+  font-size: 0.85em;
+}
+
+.assistant-help-btn:hover {
+  text-decoration: underline;
+}
+
+/* fenced code inside chat bubbles */
+.assistant-msg .assistant-code {
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 0.3rem;
+  padding: 0.4rem 0.55rem;
+  margin: 0.35rem 0;
+  font-size: 0.84em;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.assistant-msg-user .assistant-code {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
