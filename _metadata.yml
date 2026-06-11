@@ -7,7 +7,9 @@ css: assets/exercises.css
 include-in-header:
   - text: |
       <script>
-        window.EXERCISE_CONFIG = { aiFeedbackUrl: "" };
+        window.EXERCISE_CONFIG = {
+          aiFeedbackUrl: "https://r-primer-ai-feedback.teddysvoronos.workers.dev"
+        };
       </script>
 include-after-body:
   - text: |
