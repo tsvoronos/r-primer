@@ -3,4 +3,60 @@ title: "Reading R Code"
 subtitle: "A summer primer for API-201"
 ---
 
-Welcome. This site is under construction.
+This fall in API-201, you'll constantly encounter data analysis written in **R** — in problem sets, in lecture, and in the memos and papers you'll read and write. Long before you ever write R yourself, you'll need to do something more basic and more important: **look at code someone else wrote and say, in plain English, what it did.** What data went in, what happened to it, what the output shows, and what judgment calls the analyst made along the way.
+
+That one skill is what this primer teaches. You will not write code from scratch here, and you don't need any programming background — just curiosity and roughly **ten hours** between now and your arrival on campus, in whatever chunks fit your summer.
+
+## How this site works
+
+Everything runs **right in your browser** — there is nothing to install, no account to create, and nothing you can break. The code on these pages is live: click *Run Code* under any chunk to execute it, edit it, and run it again (that's encouraged — every chunk has a *Start Over* button).
+
+::: {.callout-note}
+## Give each page a moment to wake up
+The first time you run code on a page, your browser spends about **20–30 seconds** loading R behind the scenes (Units 2 and 4 also load a plotting library). That's normal — after the first run, everything is instant. A laptop works much better than a phone for this.
+:::
+
+Along the way you'll meet three kinds of questions:
+
+- **Multiple choice** — answered right on the page, with instant feedback and a chance to retry.
+- **"Explain it in plain English"** — short written answers, the core skill of the course. Click *Get feedback* for an AI reading of your answer against the instructor's rubric (it gives a verdict and a pointer, never the answer itself), or *Show model answer* to compare for yourself.
+- **Predict-then-run** — the habit that makes all of this stick: read the code, commit to a guess about the output, *then* run it.
+
+None of it is graded or tracked. Your answers live only in your own browser, and redoing a page is a feature, not a confession.
+
+## The four units
+
+Work through them in order — each one builds on the last.
+
+### [Unit 1 — The Building Blocks](unit-1.qmd) · ~2 hours
+
+The eight tidyverse "verbs" that make up almost every R script you'll see this fall: the pipe `|>` plus `filter`, `select`, `mutate`, `group_by`, `summarize`, `arrange`, and `left_join`. One verb at a time, each with live examples on a small state-level health insurance dataset, ending with a quick quiz to check that the verbs stuck.
+
+### [Unit 2 — Read a Pipeline](unit-2.qmd) · ~3 hours
+
+The verbs start chaining together. Six pipelines on school-district data, growing from three lines to a scatterplot and a full regression. For each one you'll predict the output, describe it in plain English, and then run it to check yourself. Hints early on; training wheels off by the end.
+
+### [Unit 3 — Spot the Problem](unit-3.qmd) · ~3 hours
+
+Everything in Units 1 and 2 was correct code. Here, nothing is. Four analyses that run without errors and produce plausible-looking output — each hiding a mistake that makes the analyst's claim wrong, sometimes backwards. Your job: describe what the code did, find the flaw, and explain why the output misleads. The errors are catchable with careful reading and common sense about the policy world — exactly the skill that makes you valuable in a room.
+
+### [Unit 4 — Full Narration](unit-4.qmd) · ~2 hours
+
+The capstone. One complete 35-line analysis script — cleaning, transforming, summarizing, plotting, regression — of the kind a junior analyst might email around. You'll narrate the whole thing for a colleague who hasn't seen the code, and flag the one decision you'd push back on before the results get circulated.
+
+## When you get stuck
+
+You'll notice a **💬 button** in the corner of every page. That's the primer's helper — an AI assistant that knows these pages, the datasets, and the exercises. There's also a small *"Help me understand this"* link under every code box that sends that snippet straight to it.
+
+Use it — that's what it's for — but a word of advice first: **being stuck is where the learning happens.** Reread the code, run it, change something and run it again, take a real guess. Reach for the helper when you're *genuinely* stuck, not at the first flicker of confusion. It's built to match that spirit: it starts with hints and guiding questions rather than answers, and only walks you through a solution after you've shown it your real attempts. (If you ask it for the answer outright, it will politely decline — don't take it personally.)
+
+Two practical notes: the conversation follows you from page to page, and the *Copy* button in its header puts the whole transcript on your clipboard if you want to save it or bring questions to us in the fall. And the helper can make mistakes — if it ever seems confused, trust the page over the chat.
+
+## Odds and ends
+
+- **Predict before you run.** It's the single highest-value habit on this site. A guess that turns out wrong teaches more than a run you didn't think about.
+- **If a page misbehaves** — a chunk hangs, output looks stale — just reload the page. Nothing is lost but the code edits in that chunk.
+- **Browsers:** any recent Chrome, Safari, Firefox, or Edge is fine.
+- **About AI:** in the real world, AI tools will happily write R for you, and that's fine. What they can't do is sit in a meeting and judge whether an analysis holds up. That judgment is what you're building here — so let the helper guide you, and keep the explaining to yourself.
+
+See you in the fall.
