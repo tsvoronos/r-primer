@@ -6,6 +6,7 @@ project:
     - "unit-*.qmd"
   resources:
     - assets/exercises.js
+    - assets/assistant.js
 
 website:
   title: "Reading R Code"

@@ -11,6 +11,14 @@ output, low reasoning effort), and returns:
 { "verdict": "strong" | "partial" | "needs_work", "feedback": "2-4 sentences…" }
 ```
 
+It also serves `POST /chat` for the site's tutoring sidebar
+(`assets/assistant.js`): the page sends the recent conversation plus the
+current page title, and the Worker returns `{ "reply": "…" }`. The
+assistant's system prompt scopes it to the primer's content, keeps it in
+hint-first mode, and lets it become more forthcoming only after repeated
+genuine attempts. Conversations live in the student's browser
+(localStorage) — nothing is stored server-side.
+
 Every request is tagged with your `safety_identifier` (OpenAI's stable
 abuse-detection identifier — max 64 characters; OpenAI recommends a hashed
 value rather than anything personally identifying).

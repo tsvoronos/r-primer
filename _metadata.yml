@@ -3,7 +3,9 @@
 # .free-response questions, set aiFeedbackUrl to the deployed Worker URL
 # (see ai-feedback/README.md). Left empty, students self-check against
 # the model answer instead.
-css: assets/exercises.css
+css:
+  - assets/exercises.css
+  - assets/assistant.css
 include-in-header:
   - text: |
       <script>
@@ -14,3 +16,4 @@ include-in-header:
 include-after-body:
   - text: |
       <script src="assets/exercises.js"></script>
+      <script src="assets/assistant.js"></script>
