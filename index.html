@@ -42,7 +42,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-21dfb6f5b24708782b3851273225b992.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-eab2be7250f584328c98fcd9a03b5673.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -129,8 +129,23 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#how-this-site-works" id="toc-how-this-site-works" class="nav-link active" data-scroll-target="#how-this-site-works">How this site works</a></li>
+  <li><a href="#the-four-units" id="toc-the-four-units" class="nav-link" data-scroll-target="#the-four-units">The four units</a>
+  <ul class="collapse">
+  <li><a href="#unit-1-the-building-blocks-2-hours" id="toc-unit-1-the-building-blocks-2-hours" class="nav-link" data-scroll-target="#unit-1-the-building-blocks-2-hours">Unit 1 — The Building Blocks · ~2 hours</a></li>
+  <li><a href="#unit-2-read-a-pipeline-3-hours" id="toc-unit-2-read-a-pipeline-3-hours" class="nav-link" data-scroll-target="#unit-2-read-a-pipeline-3-hours">Unit 2 — Read a Pipeline · ~3 hours</a></li>
+  <li><a href="#unit-3-spot-the-problem-3-hours" id="toc-unit-3-spot-the-problem-3-hours" class="nav-link" data-scroll-target="#unit-3-spot-the-problem-3-hours">Unit 3 — Spot the Problem · ~3 hours</a></li>
+  <li><a href="#unit-4-full-narration-2-hours" id="toc-unit-4-full-narration-2-hours" class="nav-link" data-scroll-target="#unit-4-full-narration-2-hours">Unit 4 — Full Narration · ~2 hours</a></li>
+  </ul></li>
+  <li><a href="#when-you-get-stuck" id="toc-when-you-get-stuck" class="nav-link" data-scroll-target="#when-you-get-stuck">When you get stuck</a></li>
+  <li><a href="#odds-and-ends" id="toc-odds-and-ends" class="nav-link" data-scroll-target="#odds-and-ends">Odds and ends</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -155,9 +170,70 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Welcome. This site is under construction.</p>
+<p>This fall in API-201, you’ll constantly encounter data analysis written in <strong>R</strong> — in problem sets, in lecture, and in the memos and papers you’ll read and write. Long before you ever write R yourself, you’ll need to do something more basic and more important: <strong>look at code someone else wrote and say, in plain English, what it did.</strong> What data went in, what happened to it, what the output shows, and what judgment calls the analyst made along the way.</p>
+<p>That one skill is what this primer teaches. You will not write code from scratch here, and you don’t need any programming background — just curiosity and roughly <strong>ten hours</strong> between now and your arrival on campus, in whatever chunks fit your summer.</p>
+<section id="how-this-site-works" class="level2">
+<h2 class="anchored" data-anchor-id="how-this-site-works">How this site works</h2>
+<p>Everything runs <strong>right in your browser</strong> — there is nothing to install, no account to create, and nothing you can break. The code on these pages is live: click <em>Run Code</em> under any chunk to execute it, edit it, and run it again (that’s encouraged — every chunk has a <em>Start Over</em> button).</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Give each page a moment to wake up
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The first time you run code on a page, your browser spends about <strong>20–30 seconds</strong> loading R behind the scenes (Units 2 and 4 also load a plotting library). That’s normal — after the first run, everything is instant. A laptop works much better than a phone for this.</p>
+</div>
+</div>
+<p>Along the way you’ll meet three kinds of questions:</p>
+<ul>
+<li><strong>Multiple choice</strong> — answered right on the page, with instant feedback and a chance to retry.</li>
+<li><strong>“Explain it in plain English”</strong> — short written answers, the core skill of the course. Click <em>Get feedback</em> for an AI reading of your answer against the instructor’s rubric (it gives a verdict and a pointer, never the answer itself), or <em>Show model answer</em> to compare for yourself.</li>
+<li><strong>Predict-then-run</strong> — the habit that makes all of this stick: read the code, commit to a guess about the output, <em>then</em> run it.</li>
+</ul>
+<p>None of it is graded or tracked. Your answers live only in your own browser, and redoing a page is a feature, not a confession.</p>
+</section>
+<section id="the-four-units" class="level2">
+<h2 class="anchored" data-anchor-id="the-four-units">The four units</h2>
+<p>Work through them in order — each one builds on the last.</p>
+<section id="unit-1-the-building-blocks-2-hours" class="level3">
+<h3 class="anchored" data-anchor-id="unit-1-the-building-blocks-2-hours"><a href="./unit-1.html">Unit 1 — The Building Blocks</a> · ~2 hours</h3>
+<p>The eight tidyverse “verbs” that make up almost every R script you’ll see this fall: the pipe <code>|&gt;</code> plus <code>filter</code>, <code>select</code>, <code>mutate</code>, <code>group_by</code>, <code>summarize</code>, <code>arrange</code>, and <code>left_join</code>. One verb at a time, each with live examples on a small state-level health insurance dataset, ending with a quick quiz to check that the verbs stuck.</p>
+</section>
+<section id="unit-2-read-a-pipeline-3-hours" class="level3">
+<h3 class="anchored" data-anchor-id="unit-2-read-a-pipeline-3-hours"><a href="./unit-2.html">Unit 2 — Read a Pipeline</a> · ~3 hours</h3>
+<p>The verbs start chaining together. Six pipelines on school-district data, growing from three lines to a scatterplot and a full regression. For each one you’ll predict the output, describe it in plain English, and then run it to check yourself. Hints early on; training wheels off by the end.</p>
+</section>
+<section id="unit-3-spot-the-problem-3-hours" class="level3">
+<h3 class="anchored" data-anchor-id="unit-3-spot-the-problem-3-hours"><a href="./unit-3.html">Unit 3 — Spot the Problem</a> · ~3 hours</h3>
+<p>Everything in Units 1 and 2 was correct code. Here, nothing is. Four analyses that run without errors and produce plausible-looking output — each hiding a mistake that makes the analyst’s claim wrong, sometimes backwards. Your job: describe what the code did, find the flaw, and explain why the output misleads. The errors are catchable with careful reading and common sense about the policy world — exactly the skill that makes you valuable in a room.</p>
+</section>
+<section id="unit-4-full-narration-2-hours" class="level3">
+<h3 class="anchored" data-anchor-id="unit-4-full-narration-2-hours"><a href="./unit-4.html">Unit 4 — Full Narration</a> · ~2 hours</h3>
+<p>The capstone. One complete 35-line analysis script — cleaning, transforming, summarizing, plotting, regression — of the kind a junior analyst might email around. You’ll narrate the whole thing for a colleague who hasn’t seen the code, and flag the one decision you’d push back on before the results get circulated.</p>
+</section>
+</section>
+<section id="when-you-get-stuck" class="level2">
+<h2 class="anchored" data-anchor-id="when-you-get-stuck">When you get stuck</h2>
+<p>You’ll notice a <strong>💬 button</strong> in the corner of every page. That’s the primer’s helper — an AI assistant that knows these pages, the datasets, and the exercises. There’s also a small <em>“Help me understand this”</em> link under every code box that sends that snippet straight to it.</p>
+<p>Use it — that’s what it’s for — but a word of advice first: <strong>being stuck is where the learning happens.</strong> Reread the code, run it, change something and run it again, take a real guess. Reach for the helper when you’re <em>genuinely</em> stuck, not at the first flicker of confusion. It’s built to match that spirit: it starts with hints and guiding questions rather than answers, and only walks you through a solution after you’ve shown it your real attempts. (If you ask it for the answer outright, it will politely decline — don’t take it personally.)</p>
+<p>Two practical notes: the conversation follows you from page to page, and the <em>Copy</em> button in its header puts the whole transcript on your clipboard if you want to save it or bring questions to us in the fall. And the helper can make mistakes — if it ever seems confused, trust the page over the chat.</p>
+</section>
+<section id="odds-and-ends" class="level2">
+<h2 class="anchored" data-anchor-id="odds-and-ends">Odds and ends</h2>
+<ul>
+<li><strong>Predict before you run.</strong> It’s the single highest-value habit on this site. A guess that turns out wrong teaches more than a run you didn’t think about.</li>
+<li><strong>If a page misbehaves</strong> — a chunk hangs, output looks stale — just reload the page. Nothing is lost but the code edits in that chunk.</li>
+<li><strong>Browsers:</strong> any recent Chrome, Safari, Firefox, or Edge is fine.</li>
+<li><strong>About AI:</strong> in the real world, AI tools will happily write R for you, and that’s fine. What they can’t do is sit in a meeting and judge whether an analysis holds up. That judgment is what you’re building here — so let the helper guide you, and keep the explaining to yourself.</li>
+</ul>
+<p>See you in the fall.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
