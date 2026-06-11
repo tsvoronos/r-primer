@@ -67,8 +67,9 @@ npm run deploy   # manual deploy
 
 ## Operational notes
 
-- **CORS is locked** to `https://tsvoronos.github.io` in `wrangler.toml` —
-  change `ALLOWED_ORIGIN` if the site moves.
+- **CORS is locked** to the site's origins (`https://teddysvoronos.com` and
+  `https://tsvoronos.github.io`) in `wrangler.toml` — update `ALLOWED_ORIGIN`
+  (comma-separated) if the site moves.
 - **Model** is set via the `OPENAI_MODEL` var in `wrangler.toml` (default
   `gpt-5.4-mini`); swap it without touching code.
 - **Cost/abuse**: each click is one API call (well under a cent at these

@@ -10,6 +10,7 @@ project:
 website:
   title: "Reading R Code"
   description: "A summer primer for API-201 students at HKS"
+  site-url: https://teddysvoronos.com/r-primer/
   navbar:
     left:
       - href: index.qmd
