@@ -23,6 +23,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -248,17 +283,13 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZGlzdHJpY3RzIn0=
 </section>
 <section id="exercise-1-two-verbs-warm-up" class="level2">
 <h2 class="anchored" data-anchor-id="exercise-1-two-verbs-warm-up">Exercise 1 — Two verbs (warm-up)</h2>
-<div class="cell">
-<div>
-<div id="webr-3" class="exercise-cell">
-
+<p><strong>Step 1 — read it.</strong> Don’t run it yet. Trace what each line does before you predict.</p>
+<div class="read-first">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>districts <span class="sc">|&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(pct_low_income <span class="sc">&gt;</span> <span class="dv">60</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(district, math_prof)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<script type="webr-3-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZGlzdHJpY3RzIHw+XG4gIGZpbHRlcihwY3RfbG93X2luY29tZSA+IDYwKSB8PlxuICBzZWxlY3QoZGlzdHJpY3QsIG1hdGhfcHJvZikifQ==
-</script>
-</div>
-</div>
-<p>Before writing anything, make a prediction:</p>
+<p><strong>Step 2 — predict.</strong></p>
 <div class="mcq">
 <p><strong>How many rows will the output have?</strong></p>
 <ul class="task-list">
@@ -284,12 +315,23 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZGlzdHJpY3RzIHw+XG4gIGZp
 </div>
 </div>
 <div class="free-response" data-question-id="unit2-ex1">
-<p><strong>In plain English, what does this pipeline do?</strong></p>
+<p><strong>Step 3 — in plain English, what does this pipeline do?</strong></p>
 <div class="model-answer">
 <p>It takes the district data and keeps only the districts where more than 60% of students are from low-income families — the highest-poverty districts. Then it shows just two columns: the district name and its math proficiency rate.</p>
 </div>
 <div class="grading-notes">
 <p>A strong answer says (1) the rows are reduced to districts where more than 60 percent of students are low-income (any phrasing like “high-poverty districts,” “districts where most students are low-income” is fine as long as the direction of the condition is right), and (2) the output shows only the district name and math proficiency columns. It does not need to say how many rows result. Mark “partial” if it gets the filter direction right but forgets the column selection or vice versa. Mark “needs_work” if the filter direction is backwards (keeping low-poverty districts) or it claims columns are dropped by filter / rows by select.</p>
+</div>
+</div>
+<p><strong>Step 4 — now run it</strong> and see if you were right.</p>
+<div class="cell">
+<div>
+<div id="webr-3" class="exercise-cell">
+
+</div>
+<script type="webr-3-contents">
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZGlzdHJpY3RzIHw+XG4gIGZpbHRlcihwY3RfbG93X2luY29tZSA+IDYwKSB8PlxuICBzZWxlY3QoZGlzdHJpY3QsIG1hdGhfcHJvZikifQ==
+</script>
 </div>
 </div>
 <hr>

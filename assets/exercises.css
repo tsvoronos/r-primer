@@ -182,3 +182,35 @@
   font-size: 0.9em;
   color: #6c757d;
 }
+
+/* Read-only code: "read it, don't run it yet" — a static code block with
+   no editor and no Run button, visually distinct from the live chunks. */
+.read-first {
+  position: relative;
+  margin: 1.25rem 0;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.read-first::before {
+  content: "📖  Read this — don't run it yet";
+  display: block;
+  background: #f1f3f5;
+  border-bottom: 1px solid #e0e3e7;
+  color: #495057;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+}
+
+.read-first div.sourceCode,
+.read-first pre {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+
+.read-first pre {
+  padding: 0.6rem 0.75rem;
+}
