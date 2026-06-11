@@ -1,1 +1,1 @@
-Sitemap: https://tsvoronos.github.io/r-primer/sitemap.xml
+Sitemap: https://teddysvoronos.com/r-primer/sitemap.xml
