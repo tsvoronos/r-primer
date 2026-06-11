@@ -3,7 +3,8 @@ main = "src/index.js"
 compatibility_date = "2026-06-01"
 
 [vars]
-# Only the published site may call this Worker.
-ALLOWED_ORIGIN = "https://tsvoronos.github.io"
+# Only the published site may call this Worker (comma-separated origins).
+# The GitHub Pages site is served at the custom domain as well.
+ALLOWED_ORIGIN = "https://teddysvoronos.com,https://www.teddysvoronos.com,https://tsvoronos.github.io"
 # Model used for grading; override here without touching code.
 OPENAI_MODEL = "gpt-5.4-mini"
