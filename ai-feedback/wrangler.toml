@@ -6,4 +6,4 @@ compatibility_date = "2026-06-01"
 # Only the published site may call this Worker.
 ALLOWED_ORIGIN = "https://tsvoronos.github.io"
 # Model used for grading; override here without touching code.
-OPENAI_MODEL = "gpt-5.5"
+OPENAI_MODEL = "gpt-5.4-mini"

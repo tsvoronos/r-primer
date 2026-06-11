@@ -4,7 +4,7 @@ A minimal Cloudflare Worker that lets the static Quarto site grade free-text
 answers with the OpenAI API. The site can't hold an API key (it's all
 client-side), so this Worker is the one server-side piece: the page POSTs the
 student's answer plus the question's model answer and grading notes, the
-Worker calls the OpenAI Responses API (default model `gpt-5.5`, structured
+Worker calls the OpenAI Responses API (default model `gpt-5.4-mini`, structured
 output, low reasoning effort), and returns:
 
 ```json
@@ -70,7 +70,7 @@ npm run deploy   # manual deploy
 - **CORS is locked** to `https://tsvoronos.github.io` in `wrangler.toml` —
   change `ALLOWED_ORIGIN` if the site moves.
 - **Model** is set via the `OPENAI_MODEL` var in `wrangler.toml` (default
-  `gpt-5.5`); swap it without touching code.
+  `gpt-5.4-mini`); swap it without touching code.
 - **Cost/abuse**: each click is one API call (well under a cent at these
   sizes). For a hard ceiling, set a monthly budget on the OpenAI account
   and/or add a [Cloudflare rate limiting rule](https://developers.cloudflare.com/waf/rate-limiting-rules/)
