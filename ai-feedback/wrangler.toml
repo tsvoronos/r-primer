@@ -1,0 +1,8 @@
+name = "r-primer-ai-feedback"
+main = "src/index.js"
+compatibility_date = "2026-06-01"
+
+[vars]
+# Lock this down to the published site origin before going live, e.g.
+# ALLOWED_ORIGIN = "https://yourname.quarto.pub"
+ALLOWED_ORIGIN = "*"

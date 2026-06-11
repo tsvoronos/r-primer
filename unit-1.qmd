@@ -8,6 +8,18 @@ webr:
     - dplyr
 live:
   show-solutions: false
+css: assets/exercises.css
+include-in-header:
+  - text: |
+      <script>
+        // Set aiFeedbackUrl to the deployed Worker URL to enable AI feedback
+        // on .free-response questions (see ai-feedback/README.md). Left empty,
+        // students self-check against the model answer instead.
+        window.EXERCISE_CONFIG = { aiFeedbackUrl: "" };
+      </script>
+include-after-body:
+  - text: |
+      <script src="assets/exercises.js"></script>
 ---
 
 ## What this unit is for
@@ -130,8 +142,70 @@ The next four verbs — `group_by()`, `summarize()`, `arrange()`, and `left_join
 
 ## Check your understanding
 
-When you've read through all eight verbs, complete the short matching quiz so we know you've worked through the page.
+Answer the questions below right on this page — you'll get instant feedback. They aren't graded; they're here so *you* know whether the verbs have stuck before moving on.
 
-[**→ Open the Unit 1 quiz (Google Form)**](#){.btn .btn-primary}
+::: {.mcq}
+**1. How should you read the pipe, `|>`?**
 
-*(Form link will be added before the module goes live.)*
+- [ ] "Is equal to" — that's `==`, which appears *inside* `filter()` conditions.
+- [x] "And then" — the pipe takes the result on its left and feeds it into the function on its right.
+- [ ] "Or else" — there's no fallback behavior here; the pipe always passes its left side along.
+- [ ] "Assign to" — assignment in R is `<-`, which you'll see at the start of scripts, not between verbs.
+:::
+
+::: {.mcq}
+**2. Which verb keeps only certain *rows* of a dataset?**
+
+- [ ] `select()` — `select()` is the column-wise sibling: it keeps certain *columns*.
+- [x] `filter()` — right: the condition inside `filter()` decides which rows survive.
+- [ ] `mutate()` — `mutate()` adds or changes a column; it never drops rows.
+:::
+
+::: {.mcq}
+**3. What does this pipeline return?**
+
+```r
+states |>
+  filter(region == "South") |>
+  select(state, median_income)
+```
+
+- [ ] All 10 states, but only the `state` and `median_income` columns — the `filter()` step drops every row that isn't in the South before `select()` runs.
+- [x] Only the southern states, with just the `state` and `median_income` columns — `filter()` shrinks the rows, then `select()` shrinks the columns.
+- [ ] Only the southern states, with all five columns — `select()` drops the columns it doesn't name, so only two remain.
+
+::: {.mcq-explanation}
+Reading order matters: each verb hands its result to the next one. First the rows shrink (`filter`), then the columns shrink (`select`). Scroll up and run the chunks if you want to see each step on its own.
+:::
+:::
+
+::: {.mcq}
+**4. After running `states |> mutate(uninsured_pct = uninsured_rate * 100)`, which statement is true?**
+
+- [ ] The dataset has fewer rows — `mutate()` never changes the number of rows; that's `filter()`'s job.
+- [ ] The `uninsured_rate` column is replaced — a new name on the left of `=` creates a *new* column; `uninsured_rate` is only overwritten if you reuse its exact name.
+- [x] The dataset has the same rows plus one new column — `mutate()` adds `uninsured_pct` and leaves everything else alone.
+:::
+
+### Explain it in plain English
+
+This is the core skill of the course. Read the pipeline below, then describe what it does in your own words — what data goes in, what each step does, and what the result shows. Write your answer *before* running the chunk.
+
+```{webr}
+states |>
+  filter(population > 10000000) |>
+  mutate(uninsured_count = uninsured_rate * population) |>
+  select(state, uninsured_count)
+```
+
+::: {.free-response question-id="unit1-pipeline"}
+**In plain English, what does this pipeline do?**
+
+::: {.model-answer}
+It starts with the state-level dataset, keeps only the states with more than 10 million residents, then creates a new column estimating the *number* of uninsured people in each state by multiplying the uninsured rate by the population. Finally it shows just two columns: the state name and that estimated uninsured count.
+:::
+
+::: {.grading-notes}
+Award "strong" only if the answer covers all three steps: (1) filtering to large states (population above 10 million — "big states" is acceptable), (2) creating a new column that converts the uninsured *rate* into an estimated *count* of uninsured people by multiplying by population, and (3) the output showing only state and the new count column. The rate-to-count conversion in step 2 is the most important idea — an answer that says the pipeline "adds a column" without conveying that it turns a percentage into a number of people is at best "partial". Misreading filter (e.g. keeping small states) or claiming rows/columns change in ways they don't is "needs_work".
+:::
+:::

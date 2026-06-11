@@ -4,6 +4,8 @@ project:
   render:
     - "index.qmd"
     - "unit-*.qmd"
+  resources:
+    - assets/exercises.js
 
 website:
   title: "Reading R Code"
