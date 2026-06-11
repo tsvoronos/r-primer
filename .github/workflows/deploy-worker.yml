@@ -1,0 +1,37 @@
+name: Deploy AI feedback worker
+
+on:
+  push:
+    branches: [main]
+    paths: ["ai-feedback/**"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ai-feedback
+
+      - name: Deploy to Cloudflare Workers
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: ai-feedback
+          secrets: |
+            OPENAI_API_KEY
+            OPENAI_SAFETY_IDENTIFIER
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_SAFETY_IDENTIFIER: ${{ secrets.OPENAI_SAFETY_IDENTIFIER }}
+
+      - name: Show worker URL
+        run: |
+          echo "### Worker deployed" >> "$GITHUB_STEP_SUMMARY"
+          echo "URL: ${{ steps.deploy.outputs.deployment-url }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Paste this URL into aiFeedbackUrl in _metadata.yml to enable AI feedback site-wide." >> "$GITHUB_STEP_SUMMARY"

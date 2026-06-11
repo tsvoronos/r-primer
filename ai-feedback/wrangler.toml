@@ -3,6 +3,7 @@ main = "src/index.js"
 compatibility_date = "2026-06-01"
 
 [vars]
-# Lock this down to the published site origin before going live, e.g.
-# ALLOWED_ORIGIN = "https://yourname.quarto.pub"
-ALLOWED_ORIGIN = "*"
+# Only the published site may call this Worker.
+ALLOWED_ORIGIN = "https://tsvoronos.github.io"
+# Model used for grading; override here without touching code.
+OPENAI_MODEL = "gpt-5.5"

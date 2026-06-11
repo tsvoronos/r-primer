@@ -2,12 +2,19 @@
  * AI feedback proxy for the R code-literacy primer.
  *
  * The Quarto site is static, so it can't hold an API key. This Worker sits
- * between the browser and the Claude API: the page POSTs the student's
+ * between the browser and the OpenAI API: the page POSTs the student's
  * answer plus the (page-embedded) model answer and grading notes, and the
- * Worker returns { verdict, feedback }. The ANTHROPIC_API_KEY secret never
+ * Worker returns { verdict, feedback }. The OPENAI_API_KEY secret never
  * leaves the Worker.
+ *
+ * Secrets/vars (set via `wrangler secret put` or the deploy workflow):
+ *   OPENAI_API_KEY           - required
+ *   OPENAI_SAFETY_IDENTIFIER - sent as `safety_identifier` on each request
+ *                              (stable identifier for abuse detection)
+ *   OPENAI_MODEL             - optional override; defaults to gpt-5.5
+ *   ALLOWED_ORIGIN           - CORS origin, set in wrangler.toml
  */
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 
 const MAX_ANSWER_CHARS = 3000;
 const MAX_RUBRIC_CHARS = 5000;
@@ -106,27 +113,33 @@ ${answer}
 
 Grade the student's answer.`;
 
-    const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+    const client = new OpenAI({ apiKey: env.OPENAI_API_KEY });
 
     try {
-      const response = await client.messages.create({
-        model: "claude-opus-4-8",
-        max_tokens: 1024,
-        thinking: { type: "adaptive" },
-        system: SYSTEM_PROMPT,
-        output_config: {
-          format: { type: "json_schema", schema: RESPONSE_SCHEMA },
+      const response = await client.responses.create({
+        model: env.OPENAI_MODEL || "gpt-5.5",
+        instructions: SYSTEM_PROMPT,
+        input: userPrompt,
+        max_output_tokens: 1024,
+        reasoning: { effort: "low" },
+        safety_identifier: env.OPENAI_SAFETY_IDENTIFIER || undefined,
+        text: {
+          format: {
+            type: "json_schema",
+            name: "grading",
+            strict: true,
+            schema: RESPONSE_SCHEMA,
+          },
         },
-        messages: [{ role: "user", content: userPrompt }],
       });
 
-      const text = response.content.find((b) => b.type === "text")?.text;
+      const text = response.output_text;
       if (!text) {
         return json(env, { error: "No feedback produced" }, 502);
       }
       return json(env, JSON.parse(text));
     } catch (err) {
-      console.error("Claude API error:", err);
+      console.error("OpenAI API error:", err);
       return json(env, { error: "Feedback service unavailable" }, 502);
     }
   },
