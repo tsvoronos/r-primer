@@ -7,3 +7,4 @@ _site/
 /.quarto/
 node_modules/
 .dev.vars
+.wrangler/
