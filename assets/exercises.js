@@ -229,7 +229,31 @@
       revealButton.textContent = "Show model answer";
       root.appendChild(revealButton);
 
-      revealButton.addEventListener("click", function () {
+      // Confirmation prompt, shown before the first reveal only.
+      var confirm = document.createElement("div");
+      confirm.className = "fr-confirm";
+      confirm.hidden = true;
+      var confirmText = document.createElement("span");
+      confirmText.className = "fr-confirm-text";
+      confirmText.textContent =
+        "Are you sure? Try it yourself first — being stuck is where the learning happens.";
+      var confirmYes = document.createElement("button");
+      confirmYes.type = "button";
+      confirmYes.className = "exercise-btn exercise-btn-secondary";
+      confirmYes.textContent = "Show it anyway";
+      var confirmNo = document.createElement("button");
+      confirmNo.type = "button";
+      confirmNo.className = "exercise-btn exercise-btn-secondary";
+      confirmNo.textContent = "Keep trying";
+      confirm.appendChild(confirmText);
+      confirm.appendChild(confirmYes);
+      confirm.appendChild(confirmNo);
+      root.appendChild(confirm);
+
+      var revealed = false;
+      var confirmedOnce = false;
+
+      function showAnswer() {
         var box = document.createElement("div");
         box.className = "fr-model-answer";
         var label = document.createElement("span");
@@ -241,7 +265,40 @@
         box.appendChild(body);
         output.innerHTML = "";
         output.appendChild(box);
-        revealButton.disabled = true;
+        revealed = true;
+        revealButton.textContent = "Hide model answer";
+      }
+
+      function hideAnswer() {
+        output.innerHTML = "";
+        revealed = false;
+        revealButton.textContent = "Show model answer";
+      }
+
+      revealButton.addEventListener("click", function () {
+        if (revealed) {
+          hideAnswer();
+          return;
+        }
+        // Once confirmed, the toggle is free; before that, ask first.
+        if (confirmedOnce) {
+          showAnswer();
+          return;
+        }
+        confirm.hidden = false;
+        revealButton.hidden = true;
+      });
+
+      confirmYes.addEventListener("click", function () {
+        confirmedOnce = true;
+        confirm.hidden = true;
+        revealButton.hidden = false;
+        showAnswer();
+      });
+
+      confirmNo.addEventListener("click", function () {
+        confirm.hidden = true;
+        revealButton.hidden = false;
       });
     }
 
