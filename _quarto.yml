@@ -11,7 +11,7 @@ project:
     - assets/adventure-story.js
 
 website:
-  title: "Reading R Code"
+  title: "Thinking About Data"
   description: "A summer primer for API-201 students at HKS"
   site-url: https://teddysvoronos.com/r-primer/
   navbar:

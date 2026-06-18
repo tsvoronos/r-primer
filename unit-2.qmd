@@ -15,7 +15,7 @@ live:
 
 ## What this unit is for
 
-Unit 1 taught you the verbs one at a time. This unit puts them together. You'll read six pipelines that grow from three lines to a full regression, and for each one you'll practice the core skill of this course: **describing in plain English what the code did.**
+Unit 1 taught you the verbs one at a time. This unit puts them together. You'll read six pipelines that grow from three lines to a full regression, and for each one you'll practice the core skill of this course: **describing in plain English what the analysis did to the data** — tracing the dataset from what went in to what came out.
 
 Work each exercise the same way:
 

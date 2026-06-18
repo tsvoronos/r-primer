@@ -8,3 +8,5 @@ _site/
 node_modules/
 .dev.vars
 .wrangler/
+
+**/*.quarto_ipynb

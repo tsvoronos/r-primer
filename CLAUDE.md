@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-"Reading R Code" — a Quarto website teaching incoming HKS API-201 students to *read* (not write) tidyverse R code. It is a static site with live in-browser R execution, AI-graded free-response questions, an AI tutoring sidebar, and a scripted branching scenario. Published to GitHub Pages at https://teddysvoronos.com/r-primer/ (custom domain over the `tsvoronos.github.io` Pages site).
+"Thinking About Data" — a Quarto website teaching incoming HKS API-201 students to *read and judge* (not write) data analysis, using tidyverse R code as the vehicle. It is a static site with live in-browser R execution, AI-graded free-response questions, an AI tutoring sidebar, and a scripted branching scenario. Published to GitHub Pages at https://teddysvoronos.com/r-primer/ (custom domain over the `tsvoronos.github.io` Pages site).
 
 Content lives in `index.qmd` and `unit-1.qmd` … `unit-5.qmd`. `r-literacy-module-plan.md` is the original design brief. `docs/` holds derived design references, not site pages.
 

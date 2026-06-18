@@ -1,11 +1,13 @@
 ---
-title: "Reading R Code"
+title: "Thinking About Data"
 subtitle: "A summer primer for API-201"
 ---
 
-This fall in API-201, you'll constantly encounter data analysis written in **R** — in problem sets, in lecture, and in the memos and papers you'll read and write. Long before you ever write R yourself, you'll need to do something more basic and more important: **look at code someone else wrote and say, in plain English, what it did.** What data went in, what happened to it, what the output shows, and what judgment calls the analyst made along the way.
+This fall in API-201, the real work isn't running an analysis — it's **thinking clearly about one.** Every problem set, lecture, memo, and paper rests on a chain of decisions someone made about a dataset: what went in, what happened to it, what the output actually shows, and which judgment calls quietly shaped the answer. The people who add value in a policy room are the ones who can follow that chain and say where it holds up and where it doesn't.
 
-That one skill is what this primer teaches. You will not write code from scratch here, and you don't need any programming background — just curiosity and roughly **ten hours** between now and your arrival on campus, in whatever chunks fit your summer.
+That habit of mind is what this primer builds. The analyses you'll meet happen to be written in **R** — the language you'll see all fall — so you'll learn to read it fluently enough to follow the reasoning. But the goal was never the language. The goal is to **look at an analysis and say, in plain English, what it did and whether you'd trust it.**
+
+You will not write code from scratch here, and you don't need any programming background — just curiosity and roughly **ten hours** between now and your arrival on campus, in whatever chunks fit your summer.
 
 ## How this site works
 
@@ -61,6 +63,6 @@ Two practical notes: the conversation follows you from page to page, and the *Co
 - **Predict before you run.** It's the single highest-value habit on this site. A guess that turns out wrong teaches more than a run you didn't think about.
 - **If a page misbehaves** — a chunk hangs, output looks stale — just reload the page. Nothing is lost but the code edits in that chunk.
 - **Browsers:** any recent Chrome, Safari, Firefox, or Edge is fine.
-- **About AI:** in the real world, AI tools will happily write R for you, and that's fine. What they can't do is sit in a meeting and judge whether an analysis holds up. That judgment is what you're building here — so let the helper guide you, and keep the explaining to yourself.
+- **About AI:** in the real world, AI tools will happily write the R for you, and that's fine. What they can't do is sit in a meeting and judge whether an analysis actually answers the question — whether the data, the transformations, and the conclusion hang together. That judgment about data is what you're building here, so let the helper guide you, and keep the thinking to yourself.
 
 See you in the fall.
