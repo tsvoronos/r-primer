@@ -8,7 +8,7 @@
  *   - 2014-2022 trend: expansion 12.0% -> 7.9%, non-expansion 20.4% -> 18.2%
  */
 window.ADVENTURE = {
-  version: "v2",
+  version: "v3",
   aiName: "Ada",
   start: "start",
 
@@ -203,7 +203,7 @@ window.ADVENTURE = {
     /* --------------------------------------------------- the eager AI path -- */
 
     eager_run: {
-      say: "Handled! I merged in expansion status and our outreach-programs registry for context, ran the analysis, and drafted your slide:\n\n**DRAFT SLIDE — Medicaid Expansion & Coverage**\n• Expansion **reduced uninsurance by 8.1 percentage points** (p < 0.01)\n• Analysis covers our 10 benchmark states — home to **324 million residents**\n• [chart placeholder]\n\nReady to send to Priya?",
+      say: "Handled! I merged in expansion status and our outreach-programs registry for context, ran the analysis, and drafted your slide:\n\n**DRAFT SLIDE — Medicaid Expansion & Coverage**\n• Expansion **reduced uninsurance by 8.1 percentage points**\n• Analysis covers our 10 benchmark states — home to **324 million residents**\n• [chart placeholder]\n\nReady to send to Priya?",
       choices: [
         { label: "Send it. That's why I have an AI.", to: "ending_eager_burn" },
         { label: "Wait — 324 million? The entire United States is ~340 million. Our ten states are not the whole country. Where did that number come from?", to: "join_reveal", flags: ["join"] },
@@ -215,7 +215,7 @@ window.ADVENTURE = {
       say: "Full pipeline:",
       code: "analysis <- states |>\n  left_join(expansion_status, by = \"state\") |>\n  left_join(programs, by = \"state\")   # outreach registry, for context\n\nanalysis |>\n  summarize(total_population = sum(population))",
       output: "# A tibble: 1 × 1\n  total_population\n             <dbl>\n1        323788140",
-      after: "Then a regression of uninsured rate on expansion status for the headline. The merges all completed without errors.",
+      after: "Then a simple comparison of average uninsured rates by expansion status for the headline. The merges all completed without errors.",
       choices: [
         { label: "No errors, but look at the second join: states with several outreach programs got duplicated rows, so `sum(population)` counts them multiple times.", to: "join_fixed", flags: ["join"] },
         { label: "Completed without errors is good enough. Send the slide.", to: "ending_eager_burn" },
@@ -230,9 +230,9 @@ window.ADVENTURE = {
     },
 
     join_fixed: {
-      say: "Population corrected to **169 million**. That leaves the headline bullet: *\"Expansion reduced uninsurance by 8.1 percentage points (p < 0.01).\"* The regression behind it compares expansion and non-expansion states in 2022 — the coefficient is real. Keep it?",
+      say: "Population corrected to **169 million**. That leaves the headline bullet: *\"Expansion reduced uninsurance by 8.1 percentage points.\"* The comparison behind it is just the 2022 group averages — expansion vs. non-expansion — and the gap is real. Keep it?",
       choices: [
-        { label: "Keep it — there's a p-value on it.", to: "ending_causal_burn" },
+        { label: "Keep it — the gap is real.", to: "ending_causal_burn" },
         { label: "No. \"Reduced\" claims causation, but that's a snapshot comparison of states that differed long before expansion. Show me changes over time instead.", to: "trend_out", flags: ["levels"] },
       ],
     },
@@ -351,14 +351,14 @@ window.ADVENTURE = {
     ending_causal_burn: {
       ending: {
         title: "Ending: The economist's eyebrow",
-        text: "*The slide reads \"expansion lowers uninsurance by ~9 points.\" The state economist raises an eyebrow.* \"Expansion states were lower-uninsurance states before the ACA existed — richer, different labor markets. You're comparing Massachusetts to Texas and calling the difference a policy effect. What happened to the *trends*?\" *Priya glances at you. You do not have the trends.*\n\n**What happened:** a level difference between groups that differed long before the policy isn't an effect — most of that nine-point gap is history. The defensible version compares *changes*: expansion states fell −4.1 points vs −2.2 for non-expansion (2014–2022). This is the central lesson of **Unit 4** — and a p-value doesn't rescue it; significance says the gap is real, not what caused it.",
+        text: "*The slide reads \"expansion lowers uninsurance by ~9 points.\" The state economist raises an eyebrow.* \"Expansion states were lower-uninsurance states before the ACA existed — richer, different labor markets. You're comparing Massachusetts to Texas and calling the difference a policy effect. What happened to the *trends*?\" *Priya glances at you. You do not have the trends.*\n\n**What happened:** a level difference between groups that differed long before the policy isn't an effect — most of that nine-point gap is history. The defensible version compares *changes*: expansion states fell −4.1 points vs −2.2 for non-expansion (2014–2022). This is the central lesson of **Unit 4** — and the gap being real doesn't rescue it; a genuine difference between the groups still isn't the same as what the policy caused.",
       },
     },
 
     ending_eager_burn: {
       ending: {
         title: "Ending: 324 million problems",
-        text: "*Priya reads the draft before forwarding it — thankfully.* \"Two things. One: our ten states do not contain 324 million people; that's the entire country. Two: 'reduced by 8.1 points, p<0.01' — is that causal? Walk me through the code.\" *You can't. You never looked at it.*\n\n**What happened:** two separate failures hid in one confident slide. The 324M came from a join to the outreach-programs registry that silently duplicated multi-program states before a `sum()` — **Unit 3, Exercise 3**. And \"reduced\" sold a snapshot comparison as causation — **Unit 4**. The deeper lesson: \"just handle it\" let the AI make every judgment call silently. Delegation is fine; *unexamined* delegation is how plausible-looking nonsense reaches a Secretary.",
+        text: "*Priya reads the draft before forwarding it — thankfully.* \"Two things. One: our ten states do not contain 324 million people; that's the entire country. Two: 'reduced by 8.1 points' — is that causal? Walk me through the code.\" *You can't. You never looked at it.*\n\n**What happened:** two separate failures hid in one confident slide. The 324M came from a join to the outreach-programs registry that silently duplicated multi-program states before a `sum()` — **Unit 3, Exercise 3**. And \"reduced\" sold a snapshot comparison as causation — **Unit 4**. The deeper lesson: \"just handle it\" let the AI make every judgment call silently. Delegation is fine; *unexamined* delegation is how plausible-looking nonsense reaches a Secretary.",
       },
     },
 

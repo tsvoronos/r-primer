@@ -163,17 +163,13 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="what-this-unit-is-for" class="level2">
 <h2 class="anchored" data-anchor-id="what-this-unit-is-for">What this unit is for</h2>
-<p>This is the capstone. Below is a complete analysis script of the kind a junior analyst might email around: it cleans data, builds new variables, summarizes, plots, and runs a regression — about 35 lines, start to finish. Your job is the one you’ll actually face this fall: <strong>read someone else’s analysis and narrate what they did, then flag what you’d push back on.</strong></p>
+<p>This is the capstone. Below is a complete analysis script of the kind a junior analyst might email around: it cleans data, builds new variables, summarizes, and plots — about 30 lines, start to finish. Your job is the one you’ll actually face this fall: <strong>read someone else’s analysis and narrate what they did, then flag what you’d push back on.</strong></p>
 <p>There are no hints on this page. There are a few quick checkpoint questions to keep you oriented, and two written responses at the end — the narration itself, and the decision you’d question.</p>
 </section>
 <section id="the-data" class="level2">
 <h2 class="anchored" data-anchor-id="the-data">The data</h2>
 <p>The script analyzes <code>insurance_panel</code>: uninsured rates for the same ten states you know from Units 1 and 3, but now tracked <strong>over time</strong> — one row per state per year, 2014–2022 (90 rows). It’s pre-loaded; run the chunk to see its shape.</p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>column</th>
@@ -197,10 +193,6 @@ ul.task-list li input[type="checkbox"] {
 <td><code>uninsured_rate</code></td>
 <td>share of residents uninsured (proportion, 0–1)</td>
 </tr>
-<tr class="odd">
-<td><code>unemployment_rate</code></td>
-<td>share of labor force unemployed (proportion, 0–1)</td>
-</tr>
 </tbody>
 </table>
 <p><em>(Synthetic data, patterned on real trends — don’t cite it.)</em></p>
@@ -210,7 +202,7 @@ ul.task-list li input[type="checkbox"] {
 
 </div>
 <script type="webr-1-contents">
-eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVjaG8iOmZhbHNlLCJlZGl0IjpmYWxzZSwiZXZhbCI6dHJ1ZSwiaW5jbHVkZSI6ZmFsc2UsIm91dHB1dCI6ZmFsc2V9LCJjb2RlIjoibGlicmFyeShkcGx5cilcbmxpYnJhcnkoZ2dwbG90Milcblxuc2V0LnNlZWQoMjAxKVxuc3RhdGVfaW5mbyA8LSB0aWJibGUoXG4gIHN0YXRlICAgICAgICA9IGMoXCJNYXNzYWNodXNldHRzXCIsXCJOZXcgWW9ya1wiLFwiUGVubnN5bHZhbmlhXCIsXCJGbG9yaWRhXCIsXCJHZW9yZ2lhXCIsXG4gICAgICAgICAgICAgICAgICAgXCJUZXhhc1wiLFwiSWxsaW5vaXNcIixcIk9oaW9cIixcIkNhbGlmb3JuaWFcIixcIk5ldmFkYVwiKSxcbiAgcG9wdWxhdGlvbl9tID0gYyg3LjAsIDE5LjcsIDEzLjAsIDIyLjIsIDEwLjksIDMwLjAsIDEyLjYsIDExLjgsIDM5LjAsIDMuMiksXG4gIGV4cGFuZGVkICAgICA9IGMoVFJVRSwgVFJVRSwgVFJVRSwgRkFMU0UsIEZBTFNFLCBGQUxTRSwgVFJVRSwgVFJVRSwgVFJVRSwgVFJVRSksXG4gIHJhdGVfMjAxMyAgICA9IGMoMC4wNDIsIDAuMTA4LCAwLjA5NywgMC4yMDAsIDAuMTg2LCAwLjIyMiwgMC4xMjcsIDAuMTEwLCAwLjE3MiwgMC4yMDUpXG4pXG5cbmluc3VyYW5jZV9wYW5lbCA8LSBzdGF0ZV9pbmZvIHw+XG4gIGNyb3NzX2pvaW4odGliYmxlKHllYXIgPSAyMDE0OjIwMjIpKSB8PlxuICBtdXRhdGUoXG4gICAgdW5pbnN1cmVkX3JhdGUgPSByYXRlXzIwMTMgLVxuICAgICAgaWZfZWxzZShleHBhbmRlZCwgMC4wMTEsIDAuMDA0KSAqIHBtaW4oeWVhciAtIDIwMTMsIDQpIC1cbiAgICAgIDAuMDAxMiAqICh5ZWFyIC0gMjAxMykgK1xuICAgICAgaWZfZWxzZSh5ZWFyID49IDIwMTggJiB5ZWFyIDw9IDIwMTksIDAuMDA0LCAwKSArXG4gICAgICBybm9ybShuKCksIDAsIDAuMDAyKSxcbiAgICB1bmluc3VyZWRfcmF0ZSA9IHJvdW5kKHBtYXgodW5pbnN1cmVkX3JhdGUsIDAuMDI1KSwgMyksXG4gICAgdW5lbXBsb3ltZW50X3JhdGUgPSByb3VuZCgwLjA1MiAtIDAuMDAyICogKHllYXIgLSAyMDE0KSArXG4gICAgICBpZl9lbHNlKHllYXIgPT0gMjAyMCwgMC4wNDYsIDApICsgcm5vcm0obigpLCAwLCAwLjAwMyksIDMpXG4gICkgfD5cbiAgbXV0YXRlKHVuaW5zdXJlZF9yYXRlID0gaWZfZWxzZSgoc3RhdGUgPT0gXCJOZXZhZGFcIiAmIHllYXIgPT0gMjAxNSkgfFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIChzdGF0ZSA9PSBcIkdlb3JnaWFcIiAmIHllYXIgPT0gMjAxNyksXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgTkFfcmVhbF8sIHVuaW5zdXJlZF9yYXRlKSkgfD5cbiAgc2VsZWN0KHN0YXRlLCB5ZWFyLCBwb3B1bGF0aW9uX20sIGV4cGFuZGVkLCB1bmluc3VyZWRfcmF0ZSwgdW5lbXBsb3ltZW50X3JhdGUpIn0=
+eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVjaG8iOmZhbHNlLCJlZGl0IjpmYWxzZSwiZXZhbCI6dHJ1ZSwiaW5jbHVkZSI6ZmFsc2UsIm91dHB1dCI6ZmFsc2V9LCJjb2RlIjoibGlicmFyeShkcGx5cilcbmxpYnJhcnkoZ2dwbG90Milcblxuc2V0LnNlZWQoMjAxKVxuc3RhdGVfaW5mbyA8LSB0aWJibGUoXG4gIHN0YXRlICAgICAgICA9IGMoXCJNYXNzYWNodXNldHRzXCIsXCJOZXcgWW9ya1wiLFwiUGVubnN5bHZhbmlhXCIsXCJGbG9yaWRhXCIsXCJHZW9yZ2lhXCIsXG4gICAgICAgICAgICAgICAgICAgXCJUZXhhc1wiLFwiSWxsaW5vaXNcIixcIk9oaW9cIixcIkNhbGlmb3JuaWFcIixcIk5ldmFkYVwiKSxcbiAgcG9wdWxhdGlvbl9tID0gYyg3LjAsIDE5LjcsIDEzLjAsIDIyLjIsIDEwLjksIDMwLjAsIDEyLjYsIDExLjgsIDM5LjAsIDMuMiksXG4gIGV4cGFuZGVkICAgICA9IGMoVFJVRSwgVFJVRSwgVFJVRSwgRkFMU0UsIEZBTFNFLCBGQUxTRSwgVFJVRSwgVFJVRSwgVFJVRSwgVFJVRSksXG4gIHJhdGVfMjAxMyAgICA9IGMoMC4wNDIsIDAuMTA4LCAwLjA5NywgMC4yMDAsIDAuMTg2LCAwLjIyMiwgMC4xMjcsIDAuMTEwLCAwLjE3MiwgMC4yMDUpXG4pXG5cbmluc3VyYW5jZV9wYW5lbCA8LSBzdGF0ZV9pbmZvIHw+XG4gIGNyb3NzX2pvaW4odGliYmxlKHllYXIgPSAyMDE0OjIwMjIpKSB8PlxuICBtdXRhdGUoXG4gICAgdW5pbnN1cmVkX3JhdGUgPSByYXRlXzIwMTMgLVxuICAgICAgaWZfZWxzZShleHBhbmRlZCwgMC4wMTEsIDAuMDA0KSAqIHBtaW4oeWVhciAtIDIwMTMsIDQpIC1cbiAgICAgIDAuMDAxMiAqICh5ZWFyIC0gMjAxMykgK1xuICAgICAgaWZfZWxzZSh5ZWFyID49IDIwMTggJiB5ZWFyIDw9IDIwMTksIDAuMDA0LCAwKSArXG4gICAgICBybm9ybShuKCksIDAsIDAuMDAyKSxcbiAgICB1bmluc3VyZWRfcmF0ZSA9IHJvdW5kKHBtYXgodW5pbnN1cmVkX3JhdGUsIDAuMDI1KSwgMylcbiAgKSB8PlxuICBtdXRhdGUodW5pbnN1cmVkX3JhdGUgPSBpZl9lbHNlKChzdGF0ZSA9PSBcIk5ldmFkYVwiICYgeWVhciA9PSAyMDE1KSB8XG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKHN0YXRlID09IFwiR2VvcmdpYVwiICYgeWVhciA9PSAyMDE3KSxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBOQV9yZWFsXywgdW5pbnN1cmVkX3JhdGUpKSB8PlxuICBzZWxlY3Qoc3RhdGUsIHllYXIsIHBvcHVsYXRpb25fbSwgZXhwYW5kZWQsIHVuaW5zdXJlZF9yYXRlKSJ9
 </script>
 </div>
 </div>
@@ -240,14 +232,14 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW5zdXJhbmNlX3BhbmVsIn0=
 </section>
 <section id="the-script" class="level2">
 <h2 class="anchored" data-anchor-id="the-script">The script</h2>
-<p>Read the whole thing before running anything. The chunk produces three outputs: a summary table, a figure, and a regression table.</p>
+<p>Read the whole thing before running anything. The chunk produces two outputs: a summary table and a figure.</p>
 <div class="cell">
 <div>
 <div id="webr-3" class="exercise-cell">
 
 </div>
 <script type="webr-3-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiIyBNZWRpY2FpZCBleHBhbnNpb24gYW5kIHVuaW5zdXJhbmNlLCAyMDE0LTIwMjJcbiMgRGF0YTogaW5zdXJhbmNlX3BhbmVsIChzdGF0ZS15ZWFyLCBuID0gOTApXG5cbiMgLS0gMS4gQ2xlYW4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuIyBUd28gc3RhdGUteWVhcnMgYXJlIG1pc3NpbmcgdGhlIHVuaW5zdXJlZCByYXRlOyBkcm9wIHRoZW0uXG5hbmFseXNpcyA8LSBpbnN1cmFuY2VfcGFuZWwgfD5cbiAgZmlsdGVyKCFpcy5uYSh1bmluc3VyZWRfcmF0ZSkpIHw+XG4gIG11dGF0ZShcbiAgICB1bmluc3VyZWRfcGN0ICAgID0gdW5pbnN1cmVkX3JhdGUgKiAxMDAsXG4gICAgdW5lbXBsb3ltZW50X3BjdCA9IHVuZW1wbG95bWVudF9yYXRlICogMTAwLFxuICAgIGdyb3VwICAgICAgICAgICAgPSBpZl9lbHNlKGV4cGFuZGVkLCBcIkV4cGFuZGVkIE1lZGljYWlkXCIsIFwiRGlkIG5vdCBleHBhbmRcIilcbiAgKVxuXG4jIC0tIDIuIFRyZW5kIGJ5IGV4cGFuc2lvbiBzdGF0dXMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbiMgUG9wdWxhdGlvbi13ZWlnaHRlZCwgc28gYmlnIHN0YXRlcyBjb3VudCBtb3JlLlxudHJlbmQgPC0gYW5hbHlzaXMgfD5cbiAgZ3JvdXBfYnkoZ3JvdXAsIHllYXIpIHw+XG4gIHN1bW1hcml6ZShcbiAgICBhdmdfdW5pbnN1cmVkX3BjdCA9IHdlaWdodGVkLm1lYW4odW5pbnN1cmVkX3BjdCwgcG9wdWxhdGlvbl9tKSxcbiAgICAuZ3JvdXBzID0gXCJkcm9wXCJcbiAgKVxuXG50cmVuZCB8PlxuICBmaWx0ZXIoeWVhciAlaW4lIGMoMjAxNCwgMjAxOCwgMjAyMikpXG5cbiMgLS0gMy4gUGljdHVyZSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuZ2dwbG90KHRyZW5kLCBhZXMoeCA9IHllYXIsIHkgPSBhdmdfdW5pbnN1cmVkX3BjdCwgY29sb3IgPSBncm91cCkpICtcbiAgZ2VvbV9saW5lKGxpbmV3aWR0aCA9IDEpICtcbiAgZ2VvbV9wb2ludCgpICtcbiAgbGFicyhcbiAgICB4ID0gTlVMTCwgeSA9IFwiVW5pbnN1cmVkICglKVwiLCBjb2xvciA9IE5VTEwsXG4gICAgdGl0bGUgPSBcIlVuaW5zdXJlZCByYXRlIGJ5IE1lZGljYWlkIGV4cGFuc2lvbiBzdGF0dXNcIlxuICApXG5cbiMgLS0gNC4gUmVncmVzc2lvbiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxubW9kZWwgPC0gbG0odW5pbnN1cmVkX3BjdCB+IGV4cGFuZGVkICsgdW5lbXBsb3ltZW50X3BjdCwgZGF0YSA9IGFuYWx5c2lzKVxuc3VtbWFyeShtb2RlbCkifQ==
+eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiIyBNZWRpY2FpZCBleHBhbnNpb24gYW5kIHVuaW5zdXJhbmNlLCAyMDE0LTIwMjJcbiMgRGF0YTogaW5zdXJhbmNlX3BhbmVsIChzdGF0ZS15ZWFyLCBuID0gOTApXG5cbiMgLS0gMS4gQ2xlYW4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuIyBUd28gc3RhdGUteWVhcnMgYXJlIG1pc3NpbmcgdGhlIHVuaW5zdXJlZCByYXRlOyBkcm9wIHRoZW0uXG5hbmFseXNpcyA8LSBpbnN1cmFuY2VfcGFuZWwgfD5cbiAgZmlsdGVyKCFpcy5uYSh1bmluc3VyZWRfcmF0ZSkpIHw+XG4gIG11dGF0ZShcbiAgICB1bmluc3VyZWRfcGN0ID0gdW5pbnN1cmVkX3JhdGUgKiAxMDAsXG4gICAgZ3JvdXAgICAgICAgICA9IGlmX2Vsc2UoZXhwYW5kZWQsIFwiRXhwYW5kZWQgTWVkaWNhaWRcIiwgXCJEaWQgbm90IGV4cGFuZFwiKVxuICApXG5cbiMgLS0gMi4gVHJlbmQgYnkgZXhwYW5zaW9uIHN0YXR1cyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuIyBQb3B1bGF0aW9uLXdlaWdodGVkLCBzbyBiaWcgc3RhdGVzIGNvdW50IG1vcmUuXG50cmVuZCA8LSBhbmFseXNpcyB8PlxuICBncm91cF9ieShncm91cCwgeWVhcikgfD5cbiAgc3VtbWFyaXplKFxuICAgIGF2Z191bmluc3VyZWRfcGN0ID0gd2VpZ2h0ZWQubWVhbih1bmluc3VyZWRfcGN0LCBwb3B1bGF0aW9uX20pLFxuICAgIC5ncm91cHMgPSBcImRyb3BcIlxuICApXG5cbnRyZW5kIHw+XG4gIGZpbHRlcih5ZWFyICVpbiUgYygyMDE0LCAyMDE4LCAyMDIyKSlcblxuIyAtLSAzLiBQaWN0dXJlIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5nZ3Bsb3QodHJlbmQsIGFlcyh4ID0geWVhciwgeSA9IGF2Z191bmluc3VyZWRfcGN0LCBjb2xvciA9IGdyb3VwKSkgK1xuICBnZW9tX2xpbmUobGluZXdpZHRoID0gMSkgK1xuICBnZW9tX3BvaW50KCkgK1xuICBsYWJzKFxuICAgIHggPSBOVUxMLCB5ID0gXCJVbmluc3VyZWQgKCUpXCIsIGNvbG9yID0gTlVMTCxcbiAgICB0aXRsZSA9IFwiVW5pbnN1cmVkIHJhdGUgYnkgTWVkaWNhaWQgZXhwYW5zaW9uIHN0YXR1c1wiXG4gICkifQ==
 </script>
 </div>
 </div>
@@ -273,14 +265,14 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiIyBNZWRpY2FpZCBleHBhbnNp
 </ul>
 </div>
 <div class="mcq">
-<p><strong>3. The regression coefficient on <code>expandedTRUE</code> is about −10. Why would it be a mistake to read that as “expansion reduced uninsurance by 10 points”?</strong></p>
+<p><strong>3. In 2022 the expansion group sits at about 8% uninsured and the non-expansion group at about 18% — a 10-point gap. Why would it be a mistake to read that gap as “expansion lowered uninsurance by 10 points”?</strong></p>
 <ul class="task-list">
-<li><label><input type="checkbox">Because the coefficient isn’t statistically significant — it’s highly significant; significance isn’t the issue here.</label></li>
-<li><label><input type="checkbox" checked="">Because it compares expansion states to non-expansion states <em>in levels</em>, and those states differed long before expansion — Texas and Florida had far higher uninsurance than Massachusetts back in 2014 — right: the regression mostly captures pre-existing differences between the two groups, not the change expansion caused.</label></li>
-<li><label><input type="checkbox">Because the unemployment control ruined the model — its coefficient is near zero; including it barely changes anything.</label></li>
+<li><label><input type="checkbox">Because the gap is too small to be meaningful — ten points is a large gap; size isn’t the issue here.</label></li>
+<li><label><input type="checkbox" checked="">Because the two groups were already far apart <em>in levels</em> before expansion — Texas and Florida had much higher uninsurance than Massachusetts back in 2014 — right: most of that gap is a pre-existing difference between the groups, not the change expansion caused.</label></li>
+<li><label><input type="checkbox">Because the rates are population-weighted — weighting big states more is appropriate here and isn’t what makes the gap misleading.</label></li>
 </ul>
 <div class="mcq-explanation">
-<p>Look back at the trend table: the gap between the groups was already about 8 points in 2014. The regression pools all years and compares group <em>levels</em>, so most of that −10 is history, not policy effect. The plot actually contains the better evidence: the expansion group’s line <em>falls faster</em> (roughly −4 points vs.&nbsp;−2 points over the period). Comparing changes rather than levels is the heart of the difference-in-differences designs you’ll meet this fall.</p>
+<p>Look back at the trend table: the gap between the groups was already about 8 points in 2014. Comparing 2022 <em>levels</em> mostly captures that history, not the policy effect. The plot contains the better evidence: the expansion group’s line <em>falls faster</em> (roughly −4 points vs.&nbsp;−2 points over the period). Comparing changes rather than levels is the heart of the difference-in-differences designs you’ll meet this fall.</p>
 </div>
 </div>
 <hr>
@@ -292,26 +284,26 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiIyBNZWRpY2FpZCBleHBhbnNp
 <div class="model-answer">
 <p>The analyst starts with a state-year panel: uninsured and unemployment rates for ten states, each year from 2014 to 2022, plus population and whether the state expanded Medicaid. Two state-year observations are missing an uninsured rate and get dropped, leaving 88 rows. The rates are rescaled from proportions to percentages, and each state is labeled by expansion status.</p>
 <p>Next the analyst collapses the data to compare the two groups over time: for each group in each year, a population-weighted average uninsured rate, so big states like California and Texas count in proportion to their size. The printed table snapshots 2014, 2018, and 2022; the line chart shows the full series. Both tell the same story: expansion states started around 12% uninsured and fell to about 8%, while non-expansion states started much higher, around 20%, and drifted down only a couple of points.</p>
-<p>Finally, a regression relates the uninsured percentage to expansion status and the unemployment rate. Expansion states average about 10 percentage points lower uninsurance, a large and statistically strong gap; unemployment shows essentially no association in this sample. The headline: expansion states have far less uninsurance and saw faster declines. But the regression compares levels across states that differed before expansion, so the −10 shouldn’t be read as the causal effect of expanding.</p>
+<p>The headline: expansion states have far less uninsurance and saw faster declines. But the comparison is between groups that differed long before expansion — expansion states were already about 8 points lower in 2014 — so today’s roughly 10-point gap shouldn’t be read as the effect of expanding. The more honest signal is in the <em>changes</em>: the expansion group fell about twice as fast (roughly −4 points vs −2).</p>
 </div>
 <div class="grading-notes">
-<p>Grade as a narration, not a quiz. A strong answer covers, in coherent prose: (1) the data — state-year panel, ten states, 2014-2022, with expansion status; (2) cleaning — dropping the two missing-rate observations (mentioning ~88 remaining rows is bonus) and converting proportions to percentages; (3) the group-year summary — average uninsured rate by expansion group over time, and ideally that it is population-weighted; (4) what the plot/table show — expansion group lower and falling faster (any reasonable reading of levels and trends is fine); (5) the regression — expansion associated with roughly 10 points lower uninsurance, unemployment near zero. Do not require exact numbers; the shape of the story matters more. “strong” requires at least four of the five elements woven into readable prose. “partial” for answers that hit roughly three, or that list steps mechanically without saying what the outputs mean. “needs_work” if major steps are misread (e.g., thinks the regression is at the person level, misses the cleaning entirely, or reverses which group has lower uninsurance).</p>
+<p>Grade as a narration, not a quiz. A strong answer covers, in coherent prose: (1) the data — state-year panel, ten states, 2014-2022, with expansion status; (2) cleaning — dropping the two missing-rate observations (mentioning ~88 remaining rows is bonus) and converting proportions to percentages; (3) the group-year summary — average uninsured rate by expansion group over time, and ideally that it is population-weighted; (4) what the plot/table show — expansion group lower and falling faster (any reasonable reading of levels and trends is fine). Do not require exact numbers; the shape of the story matters more. “strong” requires at least three of the four elements woven into readable prose, with a clear statement of the headline finding. “partial” for answers that hit roughly two, or that list steps mechanically without saying what the outputs mean. “needs_work” if major steps are misread (e.g., misses the cleaning entirely, or reverses which group has lower uninsurance).</p>
 </div>
 </div>
 <div class="free-response" data-question-id="unit4-decision">
 <p><strong>Name ONE decision this analyst made that you would question before circulating the results, and say why it matters. (There are several defensible choices — pick the one you’d raise first.)</strong></p>
 <div class="model-answer">
-<p>The one I’d raise first: presenting the regression coefficient (−10) as the expansion result. It compares average <em>levels</em> between expansion and non-expansion states, but those groups were far apart before expansion did anything — the 2014 gap is already about 8 points. A levels comparison mostly repackages pre-existing differences; comparing each group’s <em>change</em> over time (about −4 vs.&nbsp;−2 points) is the more honest summary, and even that rests on only three non-expansion states. Other defensible answers: dropping the two missing state-years without asking why they’re missing; treating expansion as a fixed yes/no when states expanded in different years; the near-meaningless unemployment control; or generalizing from ten hand-picked states.</p>
+<p>The one I’d raise first: reading the ~10-point gap between the groups as the effect of expansion. The comparison is between average <em>levels</em>, but those groups were far apart before expansion did anything — the 2014 gap is already about 8 points. A levels comparison mostly repackages pre-existing differences; comparing each group’s <em>change</em> over time (about −4 vs.&nbsp;−2 points) is the more honest summary, and even that rests on only three non-expansion states. Other defensible answers: dropping the two missing state-years without asking why they’re missing; treating expansion as a fixed yes/no when states expanded in different years; or generalizing from ten hand-picked states.</p>
 </div>
 <div class="grading-notes">
-<p>Accept ANY ONE well-argued concern; do not require the model answer’s choice. Defensible targets include: levels-vs-changes / pre-existing differences in the regression (the strongest catch); silently dropping the two missing observations; coding expansion as time-invariant when timing varies; only three non-expansion states / tiny sample; no causal identification; generalizing from ten states; weighting choices. “strong” requires naming a specific decision in the script AND a clear account of why it could change the conclusion — not just “correlation isn’t causation” boilerplate. “partial” for a valid concern stated vaguely or without consequences. “needs_work” for concerns about things the script didn’t do, or pure style complaints (variable names, plot colors).</p>
+<p>Accept ANY ONE well-argued concern; do not require the model answer’s choice. Defensible targets include: levels-vs-changes / pre-existing differences in the group comparison (the strongest catch); silently dropping the two missing observations; coding expansion as time-invariant when timing varies; only three non-expansion states / tiny sample; no causal identification; generalizing from ten states; weighting choices. “strong” requires naming a specific decision in the script AND a clear account of why it could change the conclusion — not just “correlation isn’t causation” boilerplate. “partial” for a valid concern stated vaguely or without consequences. “needs_work” for concerns about things the script didn’t do, or pure style complaints (variable names, plot colors).</p>
 </div>
 </div>
 <hr>
 </section>
 <section id="whats-next" class="level2">
 <h2 class="anchored" data-anchor-id="whats-next">What’s next</h2>
-<p>That’s the primer. If you can narrate this script and spot the soft spot in its regression, you’re ready for the fall: we’ll start from exactly this skill and add the tools — better designs, real data, and the statistics to back up the instincts you’ve been building.</p>
+<p>That’s the primer. If you can narrate this script and spot the soft spot in its comparison, you’re ready for the fall: we’ll start from exactly this skill and add the tools — better designs, real data, and the statistics to back up the instincts you’ve been building.</p>
 
 
 <script type="webr-data">
