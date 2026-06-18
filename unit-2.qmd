@@ -1,6 +1,6 @@
 ---
 title: "Unit 2 — Read a Pipeline"
-subtitle: "From three lines to a regression"
+subtitle: "From three lines to a scatterplot"
 format: live-html
 engine: knitr
 webr:
@@ -15,7 +15,7 @@ live:
 
 ## What this unit is for
 
-Unit 1 taught you the verbs one at a time. This unit puts them together. You'll read six pipelines that grow from three lines to a full regression, and for each one you'll practice the core skill of this course: **describing in plain English what the analysis did to the data** — tracing the dataset from what went in to what came out.
+Unit 1 taught you the verbs one at a time. This unit puts them together. You'll read five pipelines that grow from three lines to a scatterplot, and for each one you'll practice the core skill of this course: **describing in plain English what the analysis did to the data** — tracing the dataset from what went in to what came out.
 
 Work each exercise the same way:
 
@@ -226,7 +226,6 @@ Pipelines often end in a picture instead of a table. `ggplot()` gets its own tre
 districts |>
   ggplot(aes(x = pct_low_income, y = math_prof)) +
   geom_point(aes(size = enrollment)) +
-  geom_smooth(method = "lm", se = FALSE) +
   labs(
     x = "Share of students from low-income families (%)",
     y = "Math proficiency (%)",
@@ -242,7 +241,7 @@ districts |>
 - [ ] One student — the dataset is district-level; individual students are never visible in it.
 
 ::: {.mcq-explanation}
-The first question to ask of *any* plot is the same one you ask after a `summarize()`: what does one mark on this chart represent? Here, district-level rows feed straight into `ggplot()`, so each point is a district, sized by its enrollment. The line is a simple trend line fit through the points (`method = "lm"` — the same `lm` you'll meet in the next exercise).
+The first question to ask of *any* plot is the same one you ask after a `summarize()`: what does one mark on this chart represent? Here, district-level rows feed straight into `ggplot()`, so each point is a district, sized by its enrollment.
 :::
 :::
 
@@ -250,7 +249,7 @@ The first question to ask of *any* plot is the same one you ask after a `summari
 **Run the chunk, then describe in plain English what this figure shows. What is the relationship, and which axis is which?**
 
 ::: {.model-answer}
-Each point is a school district, plotted by its share of low-income students (horizontal axis) against its math proficiency rate (vertical axis), with bigger circles for bigger districts. The points slope strongly downward and the fitted line confirms it: districts with more low-income students have substantially lower math proficiency. The relationship is tight — most districts sit close to the line. It describes an association across districts; on its own it doesn't say poverty causes low scores.
+Each point is a school district, plotted by its share of low-income students (horizontal axis) against its math proficiency rate (vertical axis), with bigger circles for bigger districts. The points slope strongly downward: districts with more low-income students have substantially lower math proficiency. The relationship is tight — the points fall in a fairly clean band rather than a shapeless cloud. It describes an association across districts; on its own it doesn't say poverty causes low scores.
 :::
 
 ::: {.grading-notes}
@@ -260,39 +259,6 @@ A strong answer identifies (1) each point as a district, (2) the axes (low-incom
 
 ---
 
-## Exercise 6 — A regression
-
-The last stop in most policy analyses: a regression. `lm()` ("linear model") isn't a tidyverse verb, but you'll see it constantly. Read the formula `math_prof ~ pct_low_income + per_pupil_spend` as: *model math proficiency as a function of the low-income share and per-pupil spending.*
-
-```{webr}
-model <- lm(math_prof ~ pct_low_income + per_pupil_spend, data = districts)
-summary(model)
-```
-
-Run the chunk and find the `Coefficients` table — it's the part analysts actually read.
-
-::: {.mcq}
-**The estimate for `pct_low_income` is about −0.68. What does that mean here?**
-
-- [x] Comparing districts, each additional percentage point of low-income students is associated with math proficiency lower by about 0.68 points — right: a coefficient is the predicted change in the outcome per one-unit change in that variable, holding the others fixed.
-- [ ] 68% of districts are low-income — the coefficient is a slope, not a share of districts.
-- [ ] Low-income students score 0.68% on the math test — the outcome is the *district's* proficiency rate; the coefficient describes how it shifts, not anyone's score.
-:::
-
-::: {.free-response question-id="unit2-ex6"}
-**In plain English: what question does this regression ask, and what do the results say about per-pupil spending? Mention one reason to be careful before concluding "spending doesn't matter much."**
-
-::: {.model-answer}
-The regression asks how district math proficiency relates to two things at once: the share of low-income students and per-pupil spending, each holding the other constant. The low-income share dominates — strongly negative and precisely estimated. The spending coefficient looks tiny (about 0.0005) but its units are *per dollar*: it implies roughly half a point of proficiency per extra $1,000 per student, a modest positive association. Cautions: this is 16 districts in one year, and spending isn't assigned randomly — high-poverty districts often receive *more* money precisely because they face greater needs, which can mask spending's effect. The regression describes associations, not what would happen if a district's budget were changed.
-:::
-
-::: {.grading-notes}
-A strong answer must (1) describe the regression as relating math proficiency to both low-income share and spending simultaneously / holding the other constant, (2) read the spending result correctly — a small positive coefficient, ideally noticing the per-dollar units mean it's about 0.5 points per $1,000 rather than "essentially zero", and (3) give at least one sound caution: tiny sample, association vs. causation, or that spending may be targeted toward needier districts (reverse causality / confounding). Accept any one caution. "partial" if the regression's purpose is right but the spending interpretation ignores units entirely or no caution is offered. "needs_work" if the student misreads which variable is the outcome or interprets coefficients as percentages of districts.
-:::
-:::
-
----
-
 ## Where you stand
 
-If you could write a confident description for exercises 4 and 6, you have the core skill. Unit 3 raises the stakes: the pipelines will *look* just as tidy, but each one contains a mistake — and the output won't warn you.
+If you could write a confident description for exercises 4 and 5, you have the core skill. Unit 3 raises the stakes: the pipelines will *look* just as tidy, but each one contains a mistake — and the output won't warn you.

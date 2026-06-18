@@ -122,7 +122,7 @@ flowchart TD
   join_code -->|"✓ No errors, but look at the second join: stat…"| join_fixed
   join_code -->|"Completed without errors is good enough. Sen…"| ending_eager_burn
   join_reveal -->|"Good catch — well, my catch. What about the …"| join_fixed
-  join_fixed -->|"Keep it — there's a p-value on it."| ending_causal_burn
+  join_fixed -->|"Keep it — the gap is real."| ending_causal_burn
   join_fixed -->|"✓ No. 'Reduced' claims causation, but that's a…"| trend_out
   q_source_u -->|"Use the CSV from the drive — clock's ticking."| out_reversed_u
   q_source_u -->|"✓ Code it from the tracker, and show me the ta…"| table_correct_verified_u
@@ -277,7 +277,7 @@ path (e.g. the trend step, shared by several routes) are shown once and marked
         - Ada admits join double-counted population _(✓ join)_
           - ↘ choose: “Good catch — well, my catch. What about the …”
             - Population fixed → keep causal headline?
-              - ↘ choose: “Keep it — there's a p-value on it.”
+              - ↘ choose: “Keep it — the gap is real.”
                 - 🔴 **The economist's eyebrow**
               - ↘ choose: “No. "Reduced" claims causation, but that's a…”
                 - Ada: trends (−4.1 vs −2.2, weighted) ↪︎ _(see above)_ _(✓ levels)_
